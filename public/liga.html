@@ -81,7 +81,7 @@
     .liga-nombre span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--tinta-suave); font-family: var(--fuente-cuerpo); font-weight: 400; margin-bottom: .3rem; }
     .liga-meta { font-size: 11px; color: var(--tinta-suave); letter-spacing: .08em; margin-top: .4rem; }
 
-    /* ── Layout 3 columnas ── */
+    /* ── Layout 2 columnas ── */
     .layout-liga {
       display: grid;
       grid-template-columns: 1fr 340px;
@@ -202,10 +202,7 @@
     .pos-num.cai { color: var(--rojo); }
 
     /* Barra de forma */
-    .forma {
-      display: flex;
-      gap: 2px;
-    }
+    .forma { display: flex; gap: 2px; }
 
     .forma-resultado {
       width: 14px;
@@ -225,22 +222,15 @@
     .forma-P { background: var(--rojo-derrota); }
     .forma-? { background: var(--borde); color: var(--tinta-suave); }
 
-    /* Línea de clasificación */
-    .linea-clasif {
-      height: 3px;
-      background: var(--rojo);
-      margin: 2px 0;
-    }
-    
     /* ── Colores de clasificación ── */
     .tabla-pos td:first-child { border-left: 3px solid transparent; }
-    .qual-campeon { border-left-color: #D4AF37 !important; }
+    .qual-campeon      { border-left-color: #D4AF37 !important; }
     .qual-libertadores { border-left-color: #1a5e1a !important; }
     .qual-sudamericana { border-left-color: #005c9e !important; }
-    .qual-playoff { border-left-color: #2AD572 !important; }
-    .qual-descenso { border-left-color: var(--rojo) !important; }
+    .qual-playoff      { border-left-color: #2AD572 !important; }
+    .qual-descenso     { border-left-color: var(--rojo) !important; }
 
-    /* Leyenda debajo de la tabla */
+    /* Leyenda */
     .leyenda-clasificacion {
       display: flex;
       flex-wrap: wrap;
@@ -248,58 +238,113 @@
       margin-top: 12px;
       font-size: 10px;
       color: var(--tinta-suave);
-      font-family: var(--fuente-cuerpo);
     }
-    .leyenda-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .leyenda-color {
-      width: 8px;
-      height: 8px;
-    }
+    .leyenda-item { display: flex; align-items: center; gap: 5px; }
+    .leyenda-color { width: 8px; height: 8px; }
 
-    /* ── Cuadro de Playoffs ── */
+    /* ══════════════════════════════════════════════════════════
+       BRACKET DE PLAYOFFS — sistema de grilla proporcional
+
+       La clave del alineamiento correcto:
+       - Todas las rondas comparten la MISMA altura total.
+       - La grilla interna de cada ronda divide esa altura en
+         tantas filas iguales como matchups tiene esa ronda.
+       - Así, el centro de cada matchup queda exactamente entre
+         los centros de los dos matchups que lo alimentan.
+
+       Altura total = 8 slots (el número de matchups de octavos).
+       Cada slot = --slot-h  (altura de un matchup).
+       El gap entre matchups de la misma ronda también escala.
+    ══════════════════════════════════════════════════════════ */
+
     .playoffs-scroll {
       overflow-x: auto;
       padding-bottom: 1rem;
     }
+
     .playoffs-container {
-      display: flex;
-      gap: 2rem;
-      min-width: 800px;
-      padding: 10px 0;
+      /* 4 rondas + 3 conectores intercalados */
+      display: grid;
+      grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr;
+      min-width: 820px;
+
+      /* Variables de dimensión */
+      --mh: 52px;   /* altura de un matchup (dos equipos de ~26px c/u) */
+      --gv: 6px;    /* gap vertical entre matchups de la misma ronda */
+
+      /* Altura total = 8 matchups + 7 gaps */
+      height: calc(8 * var(--mh) + 7 * var(--gv) + 22px); /* +22 por el título de ronda */
     }
+
+    /* Cada columna de ronda ocupa toda la altura */
     .ronda {
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
-      gap: 1rem;
-      flex: 1;
+      height: 100%;
     }
+
     .ronda-titulo {
+      height: 22px;
+      line-height: 22px;
       font-size: 9px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       text-align: center;
       color: var(--tinta-suave);
-      margin-bottom: 5px;
+      flex-shrink: 0;
     }
+
+    /* El área de matchups ocupa el resto de la altura de la ronda */
+    .ronda-body {
+      flex: 1;
+      display: grid;
+      align-content: space-around; /* distribuye el espacio sobrante equitativamente */
+    }
+
+    /* Cada ronda declara cuántas filas tiene */
+    .ronda-body.oct { grid-template-rows: repeat(8, var(--mh)); gap: var(--gv); }
+    .ronda-body.cua { grid-template-rows: repeat(4, var(--mh)); gap: var(--gv); }
+    .ronda-body.sem { grid-template-rows: repeat(2, var(--mh)); gap: var(--gv); }
+    .ronda-body.fin { grid-template-rows: var(--mh); }
+
+    /*
+      EXPLICACIÓN del alineamiento:
+      - align-content: space-around reparte el espacio sobrante
+        (altura del ronda-body menos las filas declaradas)
+        en márgenes iguales arriba, abajo y entre filas.
+
+      - Para que 1°Cuartos quede centrado entre 1°Oct y 2°Oct:
+        El espacio sobrante en Cuartos = (espacio sobrante en Oct × 2) - gap
+        Esto es exactamente lo que space-around produce cuando
+        la cantidad de filas es la mitad y el gap se mantiene.
+
+      - Lo mismo aplica en cascada para Semis y Final.
+    */
+
     .matchup {
       background: var(--papel-claro);
       border: 1px solid var(--borde);
       font-size: 11px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
       border-radius: 2px;
       overflow: hidden;
+      height: 100%; /* ocupa exactamente var(--mh) */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
+
+    .matchup.es-final {
+      border-color: var(--rojo);
+      box-shadow: 0 2px 8px rgba(192,0,10,0.1);
+    }
+
     .matchup-eq {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 6px 10px;
+      padding: 4px 8px;
+      flex: 1;
       border-bottom: 1px solid var(--papel-oscuro);
+      min-height: 0;
     }
     .matchup-eq:last-child { border-bottom: none; }
     .matchup-eq.es-cai {
@@ -307,36 +352,62 @@
       font-weight: 700;
       color: var(--rojo);
     }
+
     .matchup-nombre {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       color: var(--tinta);
+      font-size: 10px;
+      overflow: hidden;
+      width: 100%;
     }
+    .matchup-nombre .eq-nombre {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .matchup-pos {
       font-size: 8px;
       color: var(--tinta-suave);
-      width: 16px;
+      min-width: 14px;
       text-align: center;
       background: var(--papel-oscuro);
-      padding: 1px 0;
-      font-weight: 400;
+      padding: 1px 2px;
+      flex-shrink: 0;
+      border-radius: 1px;
     }
+
     .matchup-tbd {
       color: var(--tinta-suave);
       font-style: italic;
-      padding: 6px 10px;
+      font-size: 9.5px;
+      padding: 4px 8px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Conectores SVG entre rondas */
+    .bracket-connector {
+      position: relative;
+      height: 100%;
+    }
+    .bracket-connector svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: visible;
     }
 
     /* ── Fixture de la fecha ── */
     .partido-fecha {
       display: flex;
       align-items: center;
-      gap: 0;
       padding: 9px 0;
       border-bottom: 1px solid var(--papel-oscuro);
     }
-
     .partido-fecha:last-child { border-bottom: none; }
 
     .partido-equipo {
@@ -348,120 +419,30 @@
       font-weight: 700;
       color: var(--tinta);
     }
+    .partido-equipo img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
+    .partido-equipo.visita { flex-direction: row-reverse; text-align: right; }
 
-    .partido-equipo img {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-      flex-shrink: 0;
-    }
+    .partido-marcador { min-width: 80px; text-align: center; flex-shrink: 0; }
+    .marcador-num { font-family: var(--fuente-titulo); font-size: 20px; font-weight: 900; color: var(--tinta); letter-spacing: .02em; }
+    .marcador-hora { font-size: 10px; letter-spacing: .08em; color: var(--tinta-suave); font-style: italic; }
+    .marcador-vivo { font-size: 9px; letter-spacing: .1em; color: var(--rojo); font-weight: 700; animation: pulso 1.4s ease-in-out infinite; }
 
-    .partido-equipo.visita {
-      flex-direction: row-reverse;
-      text-align: right;
-    }
-
-    .partido-marcador {
-      min-width: 80px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .marcador-num {
-      font-family: var(--fuente-titulo);
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--tinta);
-      letter-spacing: .02em;
-    }
-
-    .marcador-hora {
-      font-size: 10px;
-      letter-spacing: .08em;
-      color: var(--tinta-suave);
-      font-style: italic;
-    }
-
-    .marcador-vivo {
-      font-size: 9px;
-      letter-spacing: .1em;
-      color: var(--rojo);
-      font-weight: 700;
-      animation: pulso 1.4s ease-in-out infinite;
-    }
-
-    @keyframes pulso { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-
+    @keyframes pulso { 0%,100% { opacity:1; } 50% { opacity:.4; } }
     .partido-cai { background: #fff8f8; border-left: 3px solid var(--rojo); padding-left: 8px; }
 
-    /* ── Top jugadores (lateral) ── */
-    .top-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--papel-oscuro);
-    }
-
+    /* ── Top jugadores ── */
+    .top-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--papel-oscuro); }
     .top-item:last-child { border-bottom: none; }
-
-    .top-rank {
-      font-family: var(--fuente-titulo);
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--papel-oscuro);
-      min-width: 22px;
-      text-align: right;
-      line-height: 1;
-    }
-
+    .top-rank { font-family: var(--fuente-titulo); font-size: 18px; font-weight: 900; color: var(--papel-oscuro); min-width: 22px; text-align: right; line-height: 1; }
     .top-rank.primero { color: var(--rojo); }
-
     .top-info { flex: 1; }
+    .top-nombre { font-size: 12px; font-weight: 700; color: var(--tinta); line-height: 1.2; }
+    .top-equipo { font-size: 10px; color: var(--tinta-suave); font-style: italic; }
+    .top-valor { font-family: var(--fuente-titulo); font-size: 22px; font-weight: 900; color: var(--rojo); line-height: 1; }
 
-    .top-nombre {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--tinta);
-      line-height: 1.2;
-    }
-
-    .top-equipo {
-      font-size: 10px;
-      color: var(--tinta-suave);
-      font-style: italic;
-    }
-
-    .top-valor {
-      font-family: var(--fuente-titulo);
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--rojo);
-      line-height: 1;
-    }
-
-    /* ── Tabs categoría tops ── */
-    .tabs-tops {
-      display: flex;
-      border-bottom: 2px solid var(--borde);
-      margin-bottom: .75rem;
-    }
-
-    .tab-top {
-      background: none;
-      border: none;
-      padding: 6px 12px;
-      font-family: var(--fuente-cuerpo);
-      font-size: 9px;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--tinta-suave);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      transition: color .15s;
-    }
-
+    /* ── Tabs tops ── */
+    .tabs-tops { display: flex; border-bottom: 2px solid var(--borde); margin-bottom: .75rem; }
+    .tab-top { background: none; border: none; padding: 6px 12px; font-family: var(--fuente-cuerpo); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-suave); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color .15s; }
     .tab-top.activo { color: var(--rojo); border-bottom-color: var(--rojo); }
     .tab-top:hover { color: var(--tinta); }
 
@@ -523,69 +504,45 @@
       </div>
     </div>
 
-    <!-- Cuadro de Playoffs Proyectado -->
-    <div class="bloque" id="bloque-playoffs" style="display: none;">
+    <!-- Cuadro de Playoffs -->
+    <div class="bloque" id="bloque-playoffs" style="display:none;">
       <div class="bloque-titulo">&#9632; Playoffs</div>
       <div class="playoffs-scroll">
-        <div class="playoffs-container" id="playoffs-container">
-          <!-- Se inyecta por JS -->
-        </div>
+        <div class="playoffs-container" id="playoffs-container"></div>
       </div>
     </div>
 
     <div class="layout-liga">
-         
-      <!-- ── Columna principal: tabla + fecha ── -->
       <div class="col-principal">
-
-        <!-- Tabla de posiciones -->
         <div class="bloque">
           <div class="bloque-titulo">&#9632; Tabla de posiciones</div>
           <div class="tabs-zonas" id="tabs-zonas"></div>
-          <div id="contenedor-tabla">
-            <div class="cargando">Cargando tabla...</div>
-          </div>
+          <div id="contenedor-tabla"><div class="cargando">Cargando tabla...</div></div>
         </div>
-
-        <!-- Fixture de la fecha -->
         <div class="bloque">
           <div class="bloque-titulo" id="titulo-fecha">&#9632; Fecha actual</div>
-          <div id="fixture-fecha">
-            <div class="cargando">Cargando fixture...</div>
-          </div>
+          <div id="fixture-fecha"><div class="cargando">Cargando fixture...</div></div>
         </div>
-
       </div>
-
-      <!-- ── Columna lateral: tops ── -->
       <div class="col-lateral">
-
         <div class="bloque">
           <div class="bloque-titulo">&#9632; Destacados de la liga</div>
           <div class="tabs-tops">
-            <button class="tab-top activo" onclick="setTabTop('goleadores', this)">Goleadores</button>
-            <button class="tab-top" onclick="setTabTop('asistidores', this)">Asistentes</button>
-            <button class="tab-top" onclick="setTabTop('mejor_rating', this)">Rating</button>
+            <button class="tab-top activo" onclick="setTabTop('goleadores',this)">Goleadores</button>
+            <button class="tab-top" onclick="setTabTop('asistidores',this)">Asistentes</button>
+            <button class="tab-top" onclick="setTabTop('mejor_rating',this)">Rating</button>
           </div>
-          <div id="lista-tops">
-            <div class="cargando">Cargando...</div>
-          </div>
+          <div id="lista-tops"><div class="cargando">Cargando...</div></div>
         </div>
-
         <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
-
-        <!-- Resumen de CAI en la liga -->
         <div class="bloque">
           <div class="bloque-titulo">&#9632; Independiente en la liga</div>
           <div id="resumen-cai"></div>
         </div>
-
       </div>
-
-    </div><!-- /layout-liga -->
+    </div>
 
     <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
-
   </div>
 </main>
 
@@ -596,443 +553,326 @@
 </footer>
 
 <script>
-  // ════════════════════════════════════════════════
-  //  LIGA ACTUAL — lee /api/liga
-  // ════════════════════════════════════════════════
-
   let LIGA = null;
   let ZONA_ACTIVA = 0;
   let TAB_TOP_ACTIVO = 'goleadores';
 
-  // ── Helpers ──
-  function logoEquipo(id, nombre, size = 24) {
+  function logoEquipo(id, nombre, size=24) {
     if (!id) return '';
-    return `<img src="/img/equipos/${id}.png" alt="${nombre || ''}" width="${size}" height="${size}"
+    return `<img src="/img/equipos/${id}.png" alt="${nombre||''}" width="${size}" height="${size}"
       style="object-fit:contain;flex-shrink:0" onerror="this.style.display='none'">`;
   }
 
   function renderFecha() {
     const d = new Date();
     const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-    const meses = ['enero','febrero','marzo','abril','mayo','junio',
-                   'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     document.getElementById('meta-fecha').textContent =
       `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
   }
 
-  function formatHora(hora) {
-    return hora ? hora + ' hs' : '—';
-  }
+  function formatHora(hora) { return hora ? hora + ' hs' : '—'; }
 
   function formatFechaCorta(iso) {
     if (!iso) return '';
-    const [, m, d] = iso.split('-').map(Number);
+    const [,m,d] = iso.split('-').map(Number);
     const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     return `${d} ${meses[m-1]}`;
   }
 
-// ── Generador de Anual y Promedios ──
   function generarTablasArgentinas() {
     if (!LIGA.zonas || !LIGA.zonas.length) return;
-
-    // 1. Calcular Tabla Anual
     const mapAnual = {};
     LIGA.zonas.forEach(zona => {
-      // Evitamos sumar tablas que ya sean acumuladas o promedios
-      if (zona.es_anual || zona.es_promedio) return; 
-      
+      if (zona.es_anual || zona.es_promedio) return;
       zona.tabla.forEach(eq => {
         if (!mapAnual[eq.equipo_id]) {
-          mapAnual[eq.equipo_id] = { ...eq }; // Clonamos el objeto
+          mapAnual[eq.equipo_id] = { ...eq };
         } else {
-          const acumulado = mapAnual[eq.equipo_id];
-          acumulado.pj += eq.pj;
-          acumulado.g += eq.g;
-          acumulado.e += eq.e;
-          acumulado.p += eq.p;
-          acumulado.gf += eq.gf;
-          acumulado.gc += eq.gc;
-          acumulado.dg += eq.dg;
-          acumulado.pts += eq.pts;
+          const a = mapAnual[eq.equipo_id];
+          a.pj+=eq.pj; a.g+=eq.g; a.e+=eq.e; a.p+=eq.p;
+          a.gf+=eq.gf; a.gc+=eq.gc; a.dg+=eq.dg; a.pts+=eq.pts;
         }
       });
     });
-
     const tablaAnual = Object.values(mapAnual);
-    // Ordenar Anual: PTS -> DG -> GF
-    tablaAnual.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
-    tablaAnual.forEach((eq, idx) => eq.pos = idx + 1);
+    tablaAnual.sort((a,b) => b.pts-a.pts || b.dg-a.dg || b.gf-a.gf);
+    tablaAnual.forEach((eq,i) => eq.pos = i+1);
+    LIGA.zonas.push({ nombre:"Tabla Anual", tabla:tablaAnual, es_anual:true, tiene_cai:true });
 
-    LIGA.zonas.push({ nombre: "Tabla Anual", tabla: tablaAnual, es_anual: true, tiene_cai: true });
-
-    // 2. Calcular Tabla de Promedios
-    // MOCK: Arrastre de las 2 temporadas anteriores (Ejemplo ficticio).
-    // Acá pondrías los PTS y PJ acumulados reales de 2024 y 2025. 
-    // Equipos recién ascendidos arrancan vacío o en 0.
     const arrastreAnterior = {
-      10078: { pts: 110, pj: 82 }, // Independiente
-      10077: { pts: 125, pj: 82 }, // Boca
-      10076: { pts: 130, pj: 82 }, // River
-      10080: { pts: 115, pj: 82 }, // Racing
-      // ... Agregar el resto de los equipos
+      10078:{pts:110,pj:82}, 10077:{pts:125,pj:82},
+      10076:{pts:130,pj:82}, 10080:{pts:115,pj:82},
     };
-
     const tablaPromedios = tablaAnual.map(eq => {
-      const arrastre = arrastreAnterior[eq.equipo_id] || { pts: 0, pj: 0 };
-      const ptsTotales = arrastre.pts + eq.pts;
-      const pjTotales = arrastre.pj + eq.pj;
-      const promedio = pjTotales > 0 ? (ptsTotales / pjTotales).toFixed(3) : "0.000";
-
-      return {
-        ...eq,
-        ptsTotales,
-        pjTotales,
-        promedio: parseFloat(promedio)
-      };
+      const arr = arrastreAnterior[eq.equipo_id] || {pts:0,pj:0};
+      const ptsTotales = arr.pts + eq.pts;
+      const pjTotales  = arr.pj  + eq.pj;
+      const promedio   = pjTotales > 0 ? parseFloat((ptsTotales/pjTotales).toFixed(3)) : 0;
+      return { ...eq, ptsTotales, pjTotales, promedio };
     });
-
-    // Ordenar Promedios: Promedio -> PTS Totales
-    tablaPromedios.sort((a, b) => b.promedio - a.promedio || b.ptsTotales - a.ptsTotales);
-    tablaPromedios.forEach((eq, idx) => eq.pos = idx + 1);
-
-    LIGA.zonas.push({ nombre: "Promedios", tabla: tablaPromedios, es_promedio: true, tiene_cai: true });
+    tablaPromedios.sort((a,b) => b.promedio-a.promedio || b.ptsTotales-a.ptsTotales);
+    tablaPromedios.forEach((eq,i) => eq.pos = i+1);
+    LIGA.zonas.push({ nombre:"Promedios", tabla:tablaPromedios, es_promedio:true, tiene_cai:true });
   }
 
-  // ── Tabla de posiciones ──
   function renderTabla(zona) {
     const tabla = zona.tabla;
     if (!tabla || !tabla.length) {
       document.getElementById('contenedor-tabla').innerHTML = '<div class="sin-datos">Sin datos de tabla.</div>';
       return;
     }
-
     const esPromedio = zona.es_promedio;
-    const totalEquipos = tabla.length; // Usamos la longitud total para saber quién es el último
-
+    const total = tabla.length;
     const filas = tabla.map(s => {
       const esCai = s.es_cai;
-      
-      // ── Lógica de Colores (Argentina) ──
       let qualClass = '';
       if (zona.es_anual) {
-        if (s.pos === 1) qualClass = 'qual-campeon';
-        else if (s.pos >= 2 && s.pos <= 3) qualClass = 'qual-libertadores';
-        else if (s.pos >= 4 && s.pos <= 9) qualClass = 'qual-sudamericana';
-        else if (s.pos === totalEquipos) qualClass = 'qual-descenso';
+        if (s.pos===1) qualClass='qual-campeon';
+        else if (s.pos<=3) qualClass='qual-libertadores';
+        else if (s.pos<=9) qualClass='qual-sudamericana';
+        else if (s.pos===total) qualClass='qual-descenso';
       } else if (zona.es_promedio) {
-        if (s.pos === totalEquipos) qualClass = 'qual-descenso';
+        if (s.pos===total) qualClass='qual-descenso';
       } else {
-        // Fase de grupos (Zonas)
-        if (s.pos >= 1 && s.pos <= 8) qualClass = 'qual-playoff';
+        if (s.pos<=8) qualClass='qual-playoff';
       }
-      
       let colsExtra = '';
       if (esPromedio) {
-        colsExtra = `
-          <td>${s.pjTotales}</td>
-          <td><strong>${s.ptsTotales}</strong></td>
+        colsExtra=`<td>${s.pjTotales}</td><td><strong>${s.ptsTotales}</strong></td>
           <td><strong style="color:var(--rojo)">${s.promedio.toFixed(3)}</strong></td>`;
       } else {
-        const forma = (s.forma || []).slice(-5).map(r => {
-          const c = r === 'W' ? 'G' : r === 'D' ? 'E' : r === 'L' ? 'P' : '?';
+        const forma=(s.forma||[]).slice(-5).map(r=>{
+          const c=r==='W'?'G':r==='D'?'E':r==='L'?'P':'?';
           return `<span class="forma-resultado forma-${c}">${c}</span>`;
         }).join('');
-        
-        colsExtra = `
-          <td>${s.pj}</td>
-          <td>${s.g}</td>
-          <td>${s.e}</td>
-          <td>${s.p}</td>
-          <td>${s.gf}:${s.gc}</td>
-          <td>${s.dg > 0 ? '+' : ''}${s.dg}</td>
+        colsExtra=`<td>${s.pj}</td><td>${s.g}</td><td>${s.e}</td><td>${s.p}</td>
+          <td>${s.gf}:${s.gc}</td><td>${s.dg>0?'+':''}${s.dg}</td>
           <td><strong>${s.pts}</strong></td>
           <td class="izq"><div class="forma">${forma}</div></td>`;
       }
-
-      // Aplicamos la clase "qualClass" al primer td
       return `
-        <tr class="${esCai ? 'es-cai' : ''}">
-          <td class="izq ${qualClass}"><span class="pos-num ${esCai ? 'cai' : ''}">${s.pos}</span></td>
-          <td class="izq">
-            <div class="celda-equipo">
-              ${logoEquipo(s.equipo_id, s.equipo)}
-              <span>${esCai ? '<strong>Independiente</strong>' : s.equipo}</span>
-            </div>
-          </td>
+        <tr class="${esCai?'es-cai':''}">
+          <td class="izq ${qualClass}"><span class="pos-num ${esCai?'cai':''}">${s.pos}</span></td>
+          <td class="izq"><div class="celda-equipo">${logoEquipo(s.equipo_id,s.equipo)}
+            <span>${esCai?'<strong>Independiente</strong>':s.equipo}</span></div></td>
           ${colsExtra}
         </tr>`;
     }).join('');
 
-    const theadPromedios = `
-      <tr>
-        <th class="izq">#</th>
-        <th class="izq">Equipo</th>
-        <th title="Partidos Totales">PJ Tot.</th>
-        <th title="Puntos Totales">PTS Tot.</th>
-        <th title="Promedio">Promedio</th>
-      </tr>`;
+    const theadP=`<tr><th class="izq">#</th><th class="izq">Equipo</th>
+      <th>PJ Tot.</th><th>PTS Tot.</th><th>Promedio</th></tr>`;
+    const theadN=`<tr><th class="izq">#</th><th class="izq">Equipo</th>
+      <th>PJ</th><th>G</th><th>E</th><th>P</th>
+      <th>GF:GC</th><th>DG</th><th>PTS</th><th class="izq">Forma</th></tr>`;
 
-    const theadNormal = `
-      <tr>
-        <th class="izq">#</th>
-        <th class="izq">Equipo</th>
-        <th title="Partidos jugados">PJ</th>
-        <th title="Ganados">G</th>
-        <th title="Empatados">E</th>
-        <th title="Perdidos">P</th>
-        <th title="Goles">GF:GC</th>
-        <th title="Diferencia de gol">DG</th>
-        <th title="Puntos">PTS</th>
-        <th class="izq" title="Últimos 5">Forma</th>
-      </tr>`;
+    let ley='';
+    if (zona.es_anual) ley=`<div class="leyenda-clasificacion">
+      <div class="leyenda-item"><div class="leyenda-color" style="background:#D4AF37"></div> Campeón</div>
+      <div class="leyenda-item"><div class="leyenda-color" style="background:#1a5e1a"></div> Libertadores 2027</div>
+      <div class="leyenda-item"><div class="leyenda-color" style="background:#005c9e"></div> Sudamericana 2027</div>
+      <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div></div>`;
+    else if (zona.es_promedio) ley=`<div class="leyenda-clasificacion">
+      <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div></div>`;
+    else ley=`<div class="leyenda-clasificacion">
+      <div class="leyenda-item"><div class="leyenda-color" style="background:#2AD572"></div> Playoffs</div></div>`;
 
-    // ── Lógica de Leyendas ──
-    let leyendaHTML = '';
-    if (zona.es_anual) {
-      leyendaHTML = `
-        <div class="leyenda-clasificacion">
-          <div class="leyenda-item"><div class="leyenda-color" style="background:#D4AF37"></div> Campeón / Lib. 2027 / Supercopa 2026</div>
-          <div class="leyenda-item"><div class="leyenda-color" style="background:#1a5e1a"></div> Libertadores 2027</div>
-          <div class="leyenda-item"><div class="leyenda-color" style="background:#005c9e"></div> Sudamericana 2027</div>
-          <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div>
-        </div>`;
-    } else if (zona.es_promedio) {
-      leyendaHTML = `
-        <div class="leyenda-clasificacion">
-          <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div>
-        </div>`;
-    } else {
-      leyendaHTML = `
-        <div class="leyenda-clasificacion">
-          <div class="leyenda-item"><div class="leyenda-color" style="background:#2AD572"></div> Playoffs</div>
-        </div>`;
-    }
-
-    document.getElementById('contenedor-tabla').innerHTML = `
-      <table class="tabla-pos">
-        <thead>${esPromedio ? theadPromedios : theadNormal}</thead>
-        <tbody>${filas}</tbody>
-      </table>
-      ${leyendaHTML}`;
+    document.getElementById('contenedor-tabla').innerHTML=`
+      <table class="tabla-pos"><thead>${esPromedio?theadP:theadN}</thead><tbody>${filas}</tbody></table>${ley}`;
   }
-  
-  // ── Tabs de zonas ──
+
   function renderTabs() {
     const zonas = LIGA.zonas;
-    if (!zonas || !zonas.length) {
-      document.getElementById('tabs-zonas').style.display = 'none';
-      return;
-    }
-    if (zonas.length === 1) {
-      document.getElementById('tabs-zonas').style.display = 'none';
-      renderTabla(zonas[0]);
-      return;
-    }
-
-    document.getElementById('tabs-zonas').innerHTML = zonas.map((z, i) => `
-      <button class="tab-zona ${i === ZONA_ACTIVA ? 'activo' : ''}"
-        onclick="setZona(${i}, this)">${z.nombre}</button>
-    `).join('');
-
+    if (!zonas || !zonas.length) { document.getElementById('tabs-zonas').style.display='none'; return; }
+    if (zonas.length===1) { document.getElementById('tabs-zonas').style.display='none'; renderTabla(zonas[0]); return; }
+    document.getElementById('tabs-zonas').innerHTML = zonas.map((z,i)=>
+      `<button class="tab-zona ${i===ZONA_ACTIVA?'activo':''}" onclick="setZona(${i},this)">${z.nombre}</button>`
+    ).join('');
     renderTabla(zonas[ZONA_ACTIVA]);
   }
 
   function setZona(idx, btn) {
     ZONA_ACTIVA = idx;
-    document.querySelectorAll('.tab-zona').forEach(b => b.classList.remove('activo'));
+    document.querySelectorAll('.tab-zona').forEach(b=>b.classList.remove('activo'));
     btn.classList.add('activo');
     renderTabla(LIGA.zonas[idx]);
   }
 
-  // ── Fixture de la fecha ──
   function renderFixtureFecha() {
     const partidos = LIGA.partidos_fecha;
-    const label    = LIGA.fecha_label;
-
-    if (label) {
-      document.getElementById('titulo-fecha').textContent = `◼ ${label}`;
-    }
-
+    const label = LIGA.fecha_label;
+    if (label) document.getElementById('titulo-fecha').textContent = `◼ ${label}`;
     if (!partidos || !partidos.length) {
-      document.getElementById('fixture-fecha').innerHTML = '<div class="sin-datos">Sin partidos para esta fecha.</div>';
-      return;
+      document.getElementById('fixture-fecha').innerHTML='<div class="sin-datos">Sin partidos para esta fecha.</div>'; return;
     }
-
     document.getElementById('fixture-fecha').innerHTML = partidos.map(p => {
-      let marcadorHTML;
-      if (p.en_curso) {
-        marcadorHTML = `
-          <div class="marcador-num" style="color:var(--rojo)">${p.goles_local} &ndash; ${p.goles_visita}</div>
-          <div class="marcador-vivo">EN VIVO</div>`;
-      } else if (p.terminado) {
-        marcadorHTML = `<div class="marcador-num">${p.goles_local} &ndash; ${p.goles_visita}</div>`;
-      } else {
-        marcadorHTML = `
-          <div class="marcador-hora">${formatFechaCorta(p.fecha)}</div>
-          <div class="marcador-hora">${formatHora(p.hora)}</div>`;
-      }
-
-      const esCai = p.involucra_cai;
-
-      return `
-        <div class="partido-fecha ${esCai ? 'partido-cai' : ''}">
-          <div class="partido-equipo local">
-            ${logoEquipo(p.local_id, p.local, 28)}
-            <span>${p.local}</span>
-          </div>
-          <div class="partido-marcador">${marcadorHTML}</div>
-          <div class="partido-equipo visita">
-            ${logoEquipo(p.visita_id, p.visita, 28)}
-            <span>${p.visita}</span>
-          </div>
-        </div>`;
+      let mHTML;
+      if (p.en_curso) mHTML=`<div class="marcador-num" style="color:var(--rojo)">${p.goles_local}&ndash;${p.goles_visita}</div><div class="marcador-vivo">EN VIVO</div>`;
+      else if (p.terminado) mHTML=`<div class="marcador-num">${p.goles_local}&ndash;${p.goles_visita}</div>`;
+      else mHTML=`<div class="marcador-hora">${formatFechaCorta(p.fecha)}</div><div class="marcador-hora">${formatHora(p.hora)}</div>`;
+      return `<div class="partido-fecha ${p.involucra_cai?'partido-cai':''}">
+        <div class="partido-equipo local">${logoEquipo(p.local_id,p.local,28)}<span>${p.local}</span></div>
+        <div class="partido-marcador">${mHTML}</div>
+        <div class="partido-equipo visita">${logoEquipo(p.visita_id,p.visita,28)}<span>${p.visita}</span></div>
+      </div>`;
     }).join('');
   }
 
-  // ── Top jugadores ──
-  function renderTops(categoria) {
-    const lista = (LIGA.top_jugadores || {})[categoria] || [];
-
-    if (!lista.length) {
-      document.getElementById('lista-tops').innerHTML = '<div class="sin-datos">Sin datos.</div>';
-      return;
-    }
-
-    const labels = { goleadores: 'goles', asistidores: 'asist.', mejor_rating: 'rating' };
-
-    document.getElementById('lista-tops').innerHTML = lista.slice(0, 8).map((j, i) => `
+  function renderTops(cat) {
+    const lista = (LIGA.top_jugadores||{})[cat]||[];
+    if (!lista.length) { document.getElementById('lista-tops').innerHTML='<div class="sin-datos">Sin datos.</div>'; return; }
+    const labels={goleadores:'goles',asistidores:'asist.',mejor_rating:'rating'};
+    document.getElementById('lista-tops').innerHTML = lista.slice(0,8).map((j,i)=>`
       <div class="top-item">
-        <div class="top-rank ${i === 0 ? 'primero' : ''}">${i + 1}</div>
+        <div class="top-rank ${i===0?'primero':''}">${i+1}</div>
         <div class="top-info">
-          <div class="top-nombre">${j.nombre || '—'}</div>
-          <div class="top-equipo" style="display:flex;align-items:center;gap:5px">
-            ${logoEquipo(j.equipo_id, j.equipo, 14)}
-            ${j.equipo || '—'}
-          </div>
+          <div class="top-nombre">${j.nombre||'—'}</div>
+          <div class="top-equipo" style="display:flex;align-items:center;gap:5px">${logoEquipo(j.equipo_id,j.equipo,14)} ${j.equipo||'—'}</div>
         </div>
-        <div class="top-valor">${j.valor ?? '—'}<span style="font-size:9px;color:var(--tinta-suave);font-family:var(--fuente-cuerpo);font-weight:400"> ${labels[categoria]}</span></div>
+        <div class="top-valor">${j.valor??'—'}<span style="font-size:9px;color:var(--tinta-suave);font-family:var(--fuente-cuerpo);font-weight:400"> ${labels[cat]}</span></div>
       </div>`).join('');
   }
 
-  function setTabTop(categoria, btn) {
-    TAB_TOP_ACTIVO = categoria;
-    document.querySelectorAll('.tab-top').forEach(b => b.classList.remove('activo'));
+  function setTabTop(cat, btn) {
+    TAB_TOP_ACTIVO=cat;
+    document.querySelectorAll('.tab-top').forEach(b=>b.classList.remove('activo'));
     btn.classList.add('activo');
-    renderTops(categoria);
+    renderTops(cat);
   }
 
-  // ── Resumen de CAI ──
   function renderResumenCai() {
-    // Buscamos a CAI en la primera zona que lo tenga
-    let filaCai = null;
-    for (const zona of (LIGA.zonas || [])) {
-      filaCai = zona.tabla.find(s => s.es_cai);
-      if (filaCai) break;
-    }
-
-    if (!filaCai) {
-      document.getElementById('resumen-cai').innerHTML = '<div class="sin-datos">Sin datos.</div>';
-      return;
-    }
-
-    const pct = filaCai.pj > 0 ? Math.round((filaCai.g / filaCai.pj) * 100) : 0;
-
-    document.getElementById('resumen-cai').innerHTML = `
+    let filaCai=null;
+    for (const z of (LIGA.zonas||[])) { filaCai=z.tabla.find(s=>s.es_cai); if(filaCai) break; }
+    if (!filaCai) { document.getElementById('resumen-cai').innerHTML='<div class="sin-datos">Sin datos.</div>'; return; }
+    const pct = filaCai.pj>0?Math.round((filaCai.g/filaCai.pj)*100):0;
+    document.getElementById('resumen-cai').innerHTML=`
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--borde);border-top:3px solid var(--rojo)">
-        ${[
-          ['Posición',  filaCai.pos + '°'],
-          ['Puntos',    filaCai.pts],
-          ['Partidos',  filaCai.pj],
-          ['Victorias', filaCai.g],
-          ['Empates',   filaCai.e],
-          ['Derrotas',  filaCai.p],
-          ['Goles F.',  filaCai.gf],
-          ['Goles C.',  filaCai.gc],
-          ['Dif. gol',  (filaCai.dg > 0 ? '+' : '') + filaCai.dg],
-          ['% victorias', pct + '%'],
-        ].map(([label, val]) => `
-          <div style="padding:7px 10px;border-bottom:1px solid var(--papel-oscuro);border-right:1px solid var(--borde)">
-            <div style="font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave)">${label}</div>
-            <div style="font-family:var(--fuente-titulo);font-size:20px;font-weight:900;color:var(--rojo);line-height:1.1">${val}</div>
+        ${[['Posición',filaCai.pos+'°'],['Puntos',filaCai.pts],['Partidos',filaCai.pj],
+           ['Victorias',filaCai.g],['Empates',filaCai.e],['Derrotas',filaCai.p],
+           ['Goles F.',filaCai.gf],['Goles C.',filaCai.gc],
+           ['Dif. gol',(filaCai.dg>0?'+':'')+filaCai.dg],['% victorias',pct+'%']
+          ].map(([l,v])=>`<div style="padding:7px 10px;border-bottom:1px solid var(--papel-oscuro);border-right:1px solid var(--borde)">
+            <div style="font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave)">${l}</div>
+            <div style="font-family:var(--fuente-titulo);font-size:20px;font-weight:900;color:var(--rojo);line-height:1.1">${v}</div>
           </div>`).join('')}
       </div>`;
   }
 
-// ── Cuadro de Playoffs ──
+  // ══════════════════════════════════════════════════════════
+  //  PLAYOFFS — alineación por grid proporcional + SVG lines
+  // ══════════════════════════════════════════════════════════
   function renderPlayoffs() {
-    // Filtramos para agarrar solo las Zonas A y B (ignoramos Anual y Promedios)
-    const zonas = (LIGA.zonas || []).filter(z => !z.es_anual && !z.es_promedio);
-    
-    // Si no es un torneo de 2 zonas, no mostramos el cuadro
-    if (zonas.length !== 2) return;
+    const zonas = (LIGA.zonas||[]).filter(z=>!z.es_anual&&!z.es_promedio);
+    if (zonas.length!==2) return;
+    const zA=zonas[0].tabla, zB=zonas[1].tabla;
+    if (zA.length<8||zB.length<8) return;
 
-    const zA = zonas[0].tabla;
-    const zB = zonas[1].tabla;
+    document.getElementById('bloque-playoffs').style.display='block';
 
-    // Si todavía no hay suficientes equipos en las tablas, abortamos
-    if (zA.length < 8 || zB.length < 8) return;
-
-    // Mostramos el contenedor
-    document.getElementById('bloque-playoffs').style.display = 'block';
-
-    // ── Cruces exactos de Octavos de Final (16 equipos) ──
-    const cruces = [
-      [zA[0], zB[7]], // 1°A vs 8°B
-      [zB[3], zA[4]], // 4°B vs 5°A
-      [zA[2], zB[5]], // 3°A vs 6°B
-      [zB[1], zA[6]], // 2°B vs 7°A
-      [zB[0], zA[7]], // 1°B vs 8°A
-      [zA[3], zB[4]], // 4°A vs 5°B
-      [zB[2], zA[5]], // 3°B vs 6°A
-      [zA[1], zB[6]]  // 2°A vs 7°B
+    const cruces=[
+      [zA[0],zB[7]], [zB[3],zA[4]], [zA[2],zB[5]], [zB[1],zA[6]],
+      [zB[0],zA[7]], [zA[3],zB[4]], [zB[2],zA[5]], [zA[1],zB[6]]
     ];
 
-    function renderEq(eq) {
+    function eqHTML(eq) {
       if (!eq) return `<div class="matchup-tbd">Por definir</div>`;
-      const esCai = eq.es_cai ? 'es-cai' : '';
-      return `
-        <div class="matchup-eq ${esCai}">
-          <span class="matchup-nombre">
-            <span class="matchup-pos">${eq.pos}°</span>
-            ${logoEquipo(eq.equipo_id, eq.equipo, 14)}
-            <span>${eq.equipo}</span>
-          </span>
-        </div>`;
+      return `<div class="matchup-eq ${eq.es_cai?'es-cai':''}">
+        <span class="matchup-nombre">
+          <span class="matchup-pos">${eq.pos}°</span>
+          ${logoEquipo(eq.equipo_id,eq.equipo,13)}
+          <span class="eq-nombre">${eq.equipo}</span>
+        </span>
+      </div>`;
     }
 
-    const htmlOctavos = cruces.map(c => `
-      <div class="matchup">
-        ${renderEq(c[0])}
-        ${renderEq(c[1])}
-      </div>
-    `).join('');
+    function tbdHTML(a,b) {
+      return `<div class="matchup"><div class="matchup-tbd">${a}</div><div class="matchup-tbd">${b}</div></div>`;
+    }
 
-    // Para el diseño, ponemos cajas vacías "esperando" a los ganadores
-    const htmlCuartos = Array(4).fill('<div class="matchup"><div class="matchup-tbd">Ganador Octavos</div><div class="matchup-tbd">Ganador Octavos</div></div>').join('');
-    const htmlSemis = Array(2).fill('<div class="matchup"><div class="matchup-tbd">Ganador Cuartos</div><div class="matchup-tbd">Ganador Cuartos</div></div>').join('');
-    const htmlFinal = '<div class="matchup" style="border: 1px solid var(--rojo)"><div class="matchup-tbd">Finalista 1</div><div class="matchup-tbd">Finalista 2</div></div>';
+    const htmlOct = cruces.map(c=>`<div class="matchup">${eqHTML(c[0])}${eqHTML(c[1])}</div>`).join('');
+    const htmlCua = Array(4).fill(tbdHTML('Ganador ←','Ganador ←')).join('');
+    const htmlSem = Array(2).fill(tbdHTML('Ganador ←','Ganador ←')).join('');
+    const htmlFin = `<div class="matchup es-final">${tbdHTML('Finalista 1','Finalista 2').replace('<div class="matchup">','').replace('</div>','')}</div>`;
+    // (build final matchup directly)
+    const htmlFinFixed = `<div class="matchup es-final"><div class="matchup-tbd">Finalista 1</div><div class="matchup-tbd">Finalista 2</div></div>`;
 
-    document.getElementById('playoffs-container').innerHTML = `
-      <div class="ronda">
-        <div class="ronda-titulo">Octavos</div>
-        ${htmlOctavos}
+    document.getElementById('playoffs-container').innerHTML=`
+      <div class="ronda" id="ro">
+        <div class="ronda-titulo">Octavos de Final</div>
+        <div class="ronda-body oct" id="rb-oct">${htmlOct}</div>
       </div>
-      <div class="ronda">
-        <div class="ronda-titulo">Cuartos</div>
-        ${htmlCuartos}
+      <div class="bracket-connector"><svg id="svg-oc"></svg></div>
+      <div class="ronda" id="rc">
+        <div class="ronda-titulo">Cuartos de Final</div>
+        <div class="ronda-body cua" id="rb-cua">${htmlCua}</div>
       </div>
-      <div class="ronda" style="justify-content: space-around;">
+      <div class="bracket-connector"><svg id="svg-cs"></svg></div>
+      <div class="ronda" id="rs">
         <div class="ronda-titulo">Semifinal</div>
-        ${htmlSemis}
+        <div class="ronda-body sem" id="rb-sem">${htmlSem}</div>
       </div>
-      <div class="ronda" style="justify-content: center;">
-        <div class="ronda-titulo" style="color: var(--rojo)">Final</div>
-        ${htmlFinal}
+      <div class="bracket-connector"><svg id="svg-sf"></svg></div>
+      <div class="ronda" id="rf">
+        <div class="ronda-titulo" style="color:var(--rojo)">Final</div>
+        <div class="ronda-body fin" id="rb-fin">${htmlFinFixed}</div>
       </div>
     `;
+
+    // Dibujamos conectores después del layout
+    requestAnimationFrame(()=>requestAnimationFrame(drawConnectors));
   }
 
-  // ── Init ──
+  function drawConnectors() {
+    const wrap = document.getElementById('playoffs-container');
+    if (!wrap) return;
+    const wRect = wrap.getBoundingClientRect();
+
+    function midY(el) { const r=el.getBoundingClientRect(); return r.top+r.height/2-wRect.top; }
+    function rightX(el){ return el.getBoundingClientRect().right-wRect.left; }
+    function leftX(el) { return el.getBoundingClientRect().left-wRect.left; }
+
+    function connect(svgId, sources, targets) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      const sr = svg.getBoundingClientRect();
+      const dx = sr.left - wRect.left;
+      const dy = sr.top  - wRect.top;
+      svg.setAttribute('viewBox',`0 0 ${sr.width} ${sr.height}`);
+      svg.setAttribute('preserveAspectRatio','none');
+
+      let d='';
+      for (let i=0;i<targets.length;i++) {
+        const s1=sources[i*2], s2=sources[i*2+1], t=targets[i];
+        if (!s1||!s2||!t) continue;
+        const x1=rightX(s1)-dx, y1=midY(s1)-dy;
+        const x2=rightX(s2)-dx, y2=midY(s2)-dy;
+        const xt=leftX(t)-dx,   yt=midY(t)-dy;
+        const ymid=(y1+y2)/2;
+        const xmid=(x1+xt)/2;
+        // s1 → elbow → ymid
+        d+=`M${x1},${y1} H${xmid} V${ymid} `;
+        // s2 → elbow → ymid
+        d+=`M${x2},${y2} H${xmid} V${ymid} `;
+        // ymid → target
+        d+=`M${xmid},${ymid} H${xt} `;
+      }
+      svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--borde-fuerte)" stroke-width="1.5" stroke-linecap="round"/>`;
+    }
+
+    const oct=[...document.querySelectorAll('#rb-oct .matchup')];
+    const cua=[...document.querySelectorAll('#rb-cua .matchup')];
+    const sem=[...document.querySelectorAll('#rb-sem .matchup')];
+    const fin=[...document.querySelectorAll('#rb-fin .matchup')];
+
+    connect('svg-oc',oct,cua);
+    connect('svg-cs',cua,sem);
+    connect('svg-sf',sem,fin);
+  }
+
+  window.addEventListener('resize',()=>{
+    if (document.getElementById('bloque-playoffs')?.style.display!=='none') drawConnectors();
+  });
+
   async function init() {
     renderFecha();
     try {
@@ -1041,21 +881,16 @@
       if (!json.ok) throw new Error(json.error);
       LIGA = json.data;
 
-      // Cabecera
-      document.getElementById('titulo-liga').textContent = LIGA.nombre || 'Liga Profesional';
+      document.getElementById('titulo-liga').textContent = LIGA.nombre||'Liga Profesional';
       document.getElementById('liga-meta').textContent =
-        [LIGA.temporada ? 'Temporada ' + LIGA.temporada : null]
-        .filter(Boolean).join(' · ');
+        [LIGA.temporada?'Temporada '+LIGA.temporada:null].filter(Boolean).join(' · ');
 
-      // ¡Magia! Generamos las tablas extra antes de renderizar los tabs
       generarTablasArgentinas();
-      
-      // Armamos el cuadro de playoffs con la proyección actual
       renderPlayoffs();
 
-      if (LIGA.zonas && LIGA.zonas.length > 1) {
-        const idxCai = LIGA.zonas.findIndex(z => z.tiene_cai);
-        if (idxCai >= 0) ZONA_ACTIVA = idxCai;
+      if (LIGA.zonas && LIGA.zonas.length>1) {
+        const idx=LIGA.zonas.findIndex(z=>z.tiene_cai);
+        if (idx>=0) ZONA_ACTIVA=idx;
       }
 
       renderTabs();
@@ -1063,20 +898,17 @@
       renderTops('goleadores');
       renderResumenCai();
 
-      if ((LIGA.partidos_fecha || []).some(p => p.en_curso)) {
-        setTimeout(init, 60_000);
-      }
+      if ((LIGA.partidos_fecha||[]).some(p=>p.en_curso)) setTimeout(init,60000);
 
-    } catch (err) {
-      console.error('[liga]', err);
-      document.getElementById('contenedor-tabla').innerHTML =
+    } catch(err) {
+      console.error('[liga]',err);
+      document.getElementById('contenedor-tabla').innerHTML=
         `<div class="sin-datos"><strong>Sin datos de liga.</strong><br>Corré <code>npm run scrape</code>.<br><small>${err.message}</small></div>`;
-      document.getElementById('fixture-fecha').innerHTML = '';
-      document.getElementById('lista-tops').innerHTML = '';
+      document.getElementById('fixture-fecha').innerHTML='';
+      document.getElementById('lista-tops').innerHTML='';
     }
   }
 
-  
   init();
 </script>
 </body>
