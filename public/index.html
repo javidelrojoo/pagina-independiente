@@ -91,9 +91,10 @@
 
     .masthead-escudo {
       display: block;
-      margin: 0 auto 0.3rem;
-      width: 56px;
-      height: 66px;
+      margin: 0 auto 0.5rem;
+      height: 240px; /* Altura más grande para el escudo real */
+      width: auto;
+      object-fit: contain;
     }
 
     .masthead-titulo {
@@ -709,13 +710,7 @@
       </div>
       <hr class="masthead-linea" />
 
-      <svg class="masthead-escudo" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg" aria-label="Escudo del club">
-        <path d="M28 2 L54 14 L54 42 C54 54 28 64 28 64 C28 64 2 54 2 42 L2 14 Z" fill="#c0000a"/>
-        <path d="M28 2 L54 14 L54 42 C54 54 28 64 28 64 C28 64 2 54 2 42 L2 14 Z" fill="none" stroke="#8a0008" stroke-width="2"/>
-        <rect x="2" y="26" width="52" height="14" fill="#fff"/>
-        <text x="28" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="bold" fill="#fff">CA</text>
-        <text x="28" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#c0000a" letter-spacing="1">INDEPENDIENTE</text>
-      </svg>
+      <img src="/img/equipos/10078.png" alt="Escudo Club Atlético Independiente" class="masthead-escudo" onerror="this.style.display='none'">
 
       <h1 class="masthead-titulo">Independiente</h1>
       <p class="masthead-subtitulo">Club Atlético Independiente &mdash; El Rey de Copas</p>

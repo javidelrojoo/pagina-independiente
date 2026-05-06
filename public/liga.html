@@ -76,10 +76,53 @@
     .nav-lista a:hover, .nav-lista a.activo { background: var(--rojo); color: #fff; }
 
     /* ── Cabecera de sección ── */
-    .seccion-header { border-bottom: 3px double var(--borde-fuerte); padding: 1.5rem 0 1rem; margin-bottom: 1.5rem; }
-    .liga-nombre { font-family: var(--fuente-titulo); font-size: 38px; font-weight: 900; color: var(--tinta); line-height: 1; }
-    .liga-nombre span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--tinta-suave); font-family: var(--fuente-cuerpo); font-weight: 400; margin-bottom: .3rem; }
-    .liga-meta { font-size: 11px; color: var(--tinta-suave); letter-spacing: .08em; margin-top: .4rem; }
+    .seccion-header { 
+      border-bottom: 3px double var(--borde-fuerte); 
+      padding: 2rem 0 1.5rem; 
+      margin-bottom: 1.5rem; 
+      display: flex; 
+      justify-content: center; 
+      text-align: center; 
+    }
+    .liga-encabezado { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+    }
+    .liga-etiqueta { 
+      font-size: 10px; 
+      letter-spacing: .2em; 
+      text-transform: uppercase; 
+      color: var(--tinta-suave); 
+      font-family: var(--fuente-cuerpo); 
+      margin-bottom: 0.5rem; 
+    }
+    .liga-titulo-container { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 18px; 
+      margin-bottom: 0.25rem; 
+    }
+    .liga-logo { 
+      height: 120px; /* Ajustá esto según el tamaño de tu logo */
+      width: auto; 
+      object-fit: contain; 
+    }
+    .liga-nombre { 
+      font-family: var(--fuente-titulo); 
+      font-size: clamp(32px, 5vw, 48px); 
+      font-weight: 900; 
+      color: var(--tinta); 
+      line-height: 1; 
+      margin: 0; 
+    }
+    .liga-meta { 
+      font-size: 11px; 
+      color: var(--tinta-suave); 
+      letter-spacing: .12em; 
+      text-transform: uppercase; 
+    }
 
     /* ── Layout 2 columnas ── */
     .layout-liga {
@@ -263,17 +306,15 @@
     }
 
     .playoffs-container {
-      /* 4 rondas + 3 conectores intercalados */
       display: grid;
       grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr;
       min-width: 820px;
 
-      /* Variables de dimensión */
-      --mh: 52px;   /* altura de un matchup (dos equipos de ~26px c/u) */
-      --gv: 6px;    /* gap vertical entre matchups de la misma ronda */
+      /* Aumentamos de 52px a 64px para que los escudos grandes respiren */
+      --mh: 64px;   
+      --gv: 6px;    
 
-      /* Altura total = 8 matchups + 7 gaps */
-      height: calc(8 * var(--mh) + 7 * var(--gv) + 22px); /* +22 por el título de ronda */
+      height: calc(8 * var(--mh) + 7 * var(--gv) + 22px); 
     }
 
     /* Cada columna de ronda ocupa toda la altura */
@@ -356,9 +397,9 @@
     .matchup-nombre {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px; /* Separamos un poco más el escudo del texto */
       color: var(--tinta);
-      font-size: 10px;
+      font-size: 11px; /* Subimos un puntito la fuente para compensar el escudo grande */
       overflow: hidden;
       width: 100%;
     }
@@ -495,12 +536,11 @@
   <div class="pagina">
 
     <div class="seccion-header">
-      <div>
-        <div class="liga-nombre">
-          <span>&#9632; Competencia en curso</span>
-          <span id="titulo-liga">Cargando...</span>
+      <div class="liga-encabezado">
+        <div class="liga-titulo-container">
+          <img src="/img/competencias/112.png" alt="Logo Competencia" class="liga-logo" id="logo-competencia" onerror="this.style.display='none'">
+          <h2 class="liga-nombre" id="titulo-liga">Cargando...</h2>
         </div>
-        <div class="liga-meta" id="liga-meta"></div>
       </div>
     </div>
 
@@ -775,26 +815,27 @@
     ];
 
     function eqHTML(eq) {
-      if (!eq) return `<div class="matchup-tbd">Por definir</div>`;
+      if (!eq) return `<div class="matchup-tbd">&nbsp;</div>`;
       return `<div class="matchup-eq ${eq.es_cai?'es-cai':''}">
         <span class="matchup-nombre">
           <span class="matchup-pos">${eq.pos}°</span>
-          ${logoEquipo(eq.equipo_id,eq.equipo,13)}
+          ${logoEquipo(eq.equipo_id,eq.equipo,22)} <!-- Escudo más grande (22px) -->
           <span class="eq-nombre">${eq.equipo}</span>
         </span>
       </div>`;
     }
 
-    function tbdHTML(a,b) {
-      return `<div class="matchup"><div class="matchup-tbd">${a}</div><div class="matchup-tbd">${b}</div></div>`;
+    function tbdHTML() {
+      // Dejamos las cajas de los cruces a definir completamente vacías
+      return `<div class="matchup"><div class="matchup-tbd">&nbsp;</div><div class="matchup-tbd">&nbsp;</div></div>`;
     }
 
     const htmlOct = cruces.map(c=>`<div class="matchup">${eqHTML(c[0])}${eqHTML(c[1])}</div>`).join('');
-    const htmlCua = Array(4).fill(tbdHTML('Ganador ←','Ganador ←')).join('');
-    const htmlSem = Array(2).fill(tbdHTML('Ganador ←','Ganador ←')).join('');
-    const htmlFin = `<div class="matchup es-final">${tbdHTML('Finalista 1','Finalista 2').replace('<div class="matchup">','').replace('</div>','')}</div>`;
-    // (build final matchup directly)
-    const htmlFinFixed = `<div class="matchup es-final"><div class="matchup-tbd">Finalista 1</div><div class="matchup-tbd">Finalista 2</div></div>`;
+    const htmlCua = Array(4).fill(tbdHTML()).join('');
+    const htmlSem = Array(2).fill(tbdHTML()).join('');
+    
+    // Final también vacía
+    const htmlFinFixed = `<div class="matchup es-final"><div class="matchup-tbd">&nbsp;</div><div class="matchup-tbd">&nbsp;</div></div>`;
 
     document.getElementById('playoffs-container').innerHTML=`
       <div class="ronda" id="ro">
@@ -821,7 +862,6 @@
     // Dibujamos conectores después del layout
     requestAnimationFrame(()=>requestAnimationFrame(drawConnectors));
   }
-
   function drawConnectors() {
     const wrap = document.getElementById('playoffs-container');
     if (!wrap) return;
@@ -881,9 +921,17 @@
       if (!json.ok) throw new Error(json.error);
       LIGA = json.data;
 
-      document.getElementById('titulo-liga').textContent = LIGA.nombre||'Liga Profesional';
-      document.getElementById('liga-meta').textContent =
-        [LIGA.temporada?'Temporada '+LIGA.temporada:null].filter(Boolean).join(' · ');
+      // Cabecera
+      let nombreLiga = LIGA.nombre || 'Apertura';
+      if (nombreLiga.includes(' - ')) {
+        nombreLiga = nombreLiga.split(' - ')[0]; // Queda "Apertura"
+      }
+      
+      // Armamos: "Liga Profesional: Torneo Apertura 2026"
+      const temporadaStr = LIGA.temporada || '';
+      const tituloFinal = `Liga Profesional: Torneo ${nombreLiga} ${temporadaStr}`.trim();
+      
+      document.getElementById('titulo-liga').textContent = tituloFinal;
 
       generarTablasArgentinas();
       renderPlayoffs();
