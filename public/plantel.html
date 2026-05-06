@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plantel — Club Atlético Independiente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --rojo:#c0000a; --rojo-oscuro:#8a0008; --rojo-suave:#fef0f0;
+      --tinta:#1a1612; --tinta-media:#4a4540; --tinta-suave:#7a746e;
+      --papel:#f5f0e8; --papel-oscuro:#ede7d9; --papel-claro:#faf7f2;
+      --borde:#c8bfb0; --borde-fuerte:#8a8070;
+      --fuente-titulo:'Playfair Display',Georgia,serif;
+      --fuente-cuerpo:'Libre Baskerville',Georgia,serif;
+      --fuente-cabeza:'IM Fell English SC',Georgia,serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background:var(--papel); color:var(--tinta); font-family:var(--fuente-cuerpo); font-size:15px; line-height:1.7; }
+    body::before { content:''; position:fixed; inset:0; background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.018) 28px,rgba(0,0,0,.018) 29px); pointer-events:none; z-index:0; }
+    .pagina { max-width:1100px; margin:0 auto; padding:0 1.5rem; position:relative; z-index:1; }
+
+    .masthead { border-top:6px solid var(--rojo); border-bottom:4px solid var(--rojo); padding:.5rem 0 .7rem; text-align:center; }
+    .masthead-meta { display:flex; justify-content:space-between; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--tinta-suave); padding:0 .25rem; margin-bottom:.4rem; }
+    .masthead-linea { border:none; border-top:1px solid var(--borde); margin:.35rem 0; }
+    .masthead-titulo { font-family:var(--fuente-cabeza); font-size:clamp(36px,6vw,68px); letter-spacing:.04em; color:var(--tinta); line-height:1; margin-bottom:.1rem; }
+    .masthead-subtitulo { font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--tinta-suave); }
+    .banda-roja { background:var(--rojo); color:#fff; text-align:center; font-size:10px; letter-spacing:.22em; text-transform:uppercase; padding:5px 0; }
+
+    .nav-principal { border-bottom:2px solid var(--tinta); background:var(--papel-claro); position:sticky; top:0; z-index:100; }
+    .nav-lista { display:flex; list-style:none; max-width:1100px; margin:0 auto; padding:0 1.5rem; }
+    .nav-lista a { display:block; padding:10px 18px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--tinta-media); text-decoration:none; border-right:1px solid var(--borde); transition:background .15s,color .15s; font-family:var(--fuente-cuerpo); }
+    .nav-lista li:first-child a { border-left:1px solid var(--borde); }
+    .nav-lista a:hover,.nav-lista a.activo { background:var(--rojo); color:#fff; }
+
+    .seccion-header { border-bottom:3px double var(--borde-fuerte); padding:1.5rem 0 1rem; display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+    .seccion-titulo { font-family:var(--fuente-titulo); font-size:36px; font-weight:900; color:var(--tinta); line-height:1; }
+    .seccion-titulo span { display:block; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--tinta-suave); font-family:var(--fuente-cuerpo); font-weight:400; margin-bottom:.25rem; }
+
+    .controles { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin:.75rem 0 0; padding-bottom:.75rem; border-bottom:1px solid var(--borde); }
+
+    .selector-temporada { display:flex; align-items:center; border:1px solid var(--borde-fuerte); background:var(--papel-claro); }
+    .selector-temporada label { font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:var(--tinta-suave); padding:4px 10px; background:var(--papel-oscuro); border-right:1px solid var(--borde); white-space:nowrap; }
+    .selector-temporada select { border:none; background:transparent; font-family:var(--fuente-cuerpo); font-size:12px; color:var(--tinta); padding:6px 10px; cursor:pointer; outline:none; }
+
+    .tabs-posicion { display:flex; border:1px solid var(--borde); background:var(--papel-claro); }
+    .tab-btn { flex:1; background:none; border:none; border-right:1px solid var(--borde); padding:8px 4px; font-family:var(--fuente-cuerpo); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-suave); cursor:pointer; transition:background .15s; }
+    .tab-btn:last-child { border-right:none; }
+    .tab-btn:hover { background:var(--papel-oscuro); color:var(--tinta); }
+    .tab-btn.activo { background:var(--rojo); color:#fff; }
+
+    .toggle-vista { display:flex; border:1px solid var(--borde); }
+    .toggle-btn { padding:5px 12px; background:none; border:none; border-right:1px solid var(--borde); font-size:11px; cursor:pointer; color:var(--tinta-suave); font-family:var(--fuente-cuerpo); transition:background .15s; }
+    .toggle-btn:last-child { border-right:none; }
+    .toggle-btn.activo { background:var(--tinta); color:var(--papel-claro); }
+
+    /* ── Grid de tarjetas ── */
+    .grid-jugadores { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); border-top:2px solid var(--borde-fuerte); border-left:1px solid var(--borde); margin-bottom:1.5rem; }
+    .tarjeta-jugador { border-right:1px solid var(--borde); border-bottom:1px solid var(--borde); display:flex; flex-direction:column; background:var(--papel-claro); transition:background .15s; }
+    .tarjeta-jugador:hover { background:var(--papel); }
+    .tarjeta-foto { width:100%; aspect-ratio:1/1; background:var(--papel-oscuro); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; border-bottom:1px solid var(--borde); }
+    .tarjeta-foto img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+    .tarjeta-foto-ph { font-family:var(--fuente-titulo); font-size:48px; font-weight:900; color:var(--borde); }
+    .tarjeta-numero { position:absolute; top:8px; left:8px; font-family:var(--fuente-titulo); font-size:13px; font-weight:900; color:#fff; background:var(--rojo); padding:1px 7px; }
+    .tarjeta-pos-badge { position:absolute; top:8px; right:8px; font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-suave); background:rgba(245,240,232,.9); padding:2px 5px; border:1px solid var(--borde); }
+    .tarjeta-info { padding:10px 12px 12px; }
+    .tarjeta-nombre { font-family:var(--fuente-titulo); font-size:14px; font-weight:700; color:var(--tinta); line-height:1.2; margin-bottom:2px; }
+    .tarjeta-nombre-completo { font-size:10px; color:var(--tinta-suave); font-style:italic; margin-bottom:6px; }
+    .tarjeta-meta { font-size:10px; color:var(--tinta-suave); display:flex; gap:5px; flex-wrap:wrap; }
+    .tarjeta-meta span { border:1px solid var(--borde); padding:1px 5px; font-size:9px; letter-spacing:.05em; }
+    .tarjeta-stats { display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--borde); margin-top:8px; }
+    .tarjeta-stat { text-align:center; padding:5px 2px; border-right:1px solid var(--borde); }
+    .tarjeta-stat:last-child { border-right:none; }
+    .tarjeta-stat-num { display:block; font-family:var(--fuente-titulo); font-size:16px; font-weight:900; color:var(--rojo); line-height:1; }
+    .tarjeta-stat-label { display:block; font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-suave); margin-top:1px; }
+
+    /* ── Tabla lista ── */
+    .tabla-plantel { width:100%; border-collapse:collapse; font-size:13px; border-top:2px solid var(--borde-fuerte); margin-bottom:1.5rem; display:none; }
+    .tabla-plantel th { font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:var(--tinta-suave); font-weight:400; padding:6px 10px; text-align:left; background:var(--papel-oscuro); border-bottom:2px solid var(--borde-fuerte); font-family:var(--fuente-cuerpo); }
+    .tabla-plantel td { padding:8px 10px; border-bottom:1px solid var(--papel-oscuro); vertical-align:middle; }
+    .tabla-plantel tbody tr:hover { background:var(--papel-claro); }
+    .col-foto { width:44px; }
+    .col-foto img { width:36px; height:36px; border-radius:50%; object-fit:cover; object-position:top; border:1px solid var(--borde); display:block; }
+    .col-foto-ph { width:36px; height:36px; border-radius:50%; background:var(--papel-oscuro); border:1px solid var(--borde); display:flex; align-items:center; justify-content:center; font-family:var(--fuente-titulo); font-size:13px; font-weight:900; color:var(--borde); }
+    .col-nombre { font-weight:700; color:var(--tinta); }
+    .col-nombre small { display:block; font-weight:400; font-size:10px; color:var(--tinta-suave); font-style:italic; }
+    .col-num { font-family:var(--fuente-titulo); font-size:16px; font-weight:900; color:var(--papel-oscuro); }
+    .col-stat { text-align:center; font-family:var(--fuente-titulo); font-size:15px; font-weight:700; color:var(--rojo); }
+    .col-pos,.col-nac,.col-edad { font-size:11px; color:var(--tinta-suave); }
+
+    .cargando { text-align:center; padding:3rem; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-suave); font-style:italic; }
+    .sin-datos { text-align:center; padding:3rem; font-size:13px; font-style:italic; color:var(--tinta-suave); border:1px dashed var(--borde); margin:1rem 0; }
+    .sin-datos code { font-style:normal; background:var(--papel-oscuro); padding:2px 6px; }
+    .ornamento { text-align:center; color:var(--borde-fuerte); font-size:14px; letter-spacing:10px; margin:.5rem 0 1.5rem; }
+    .pie { border-top:4px solid var(--rojo); padding:.75rem 0; text-align:center; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--tinta-suave); margin-top:2rem; }
+    @media(max-width:600px) { .grid-jugadores { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="pagina">
+    <div class="masthead">
+      <div class="masthead-meta">
+        <span id="meta-fecha">—</span>
+        <span>El Rojo de Avellaneda</span>
+        <span>Fundado en 1905 &bull; Avellaneda</span>
+      </div>
+      <hr class="masthead-linea" />
+      <h1 class="masthead-titulo">Independiente</h1>
+      <p class="masthead-subtitulo">Club Atlético Independiente &mdash; El Rey de Copas</p>
+      <hr class="masthead-linea" />
+    </div>
+  </div>
+  <div class="banda-roja">&#9733; Plantel Oficial &#9733;</div>
+  <nav class="nav-principal">
+    <ul class="nav-lista">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="calendario.html">Calendario</a></li>
+      <li><a href="liga.html">Liga Actual</a></li>
+      <li><a href="historial.html">Historial</a></li>
+      <li><a href="plantel.html" class="activo">Plantel</a></li>
+      <li><a href="campeonatos.html">Campeonatos</a></li>
+      <li><a href="estadisticas.html">Estadísticas</a></li>
+      <li><a href="historicos.html">Ídolos</a></li>
+    </ul>
+  </nav>
+</header>
+<main>
+  <div class="pagina">
+    <div class="seccion-header">
+      <div class="seccion-titulo">
+        <span>&#9632; Elenco oficial</span>Plantel
+      </div>
+      <div class="selector-temporada">
+        <label for="sel-temporada">Temporada</label>
+        <select id="sel-temporada" onchange="cargarTemporada(this.value)"></select>
+      </div>
+    </div>
+
+    <div class="controles">
+      <div class="tabs-posicion">
+        <button class="tab-btn activo" onclick="filtrarPosicion('todos',this)">Todos</button>
+        <button class="tab-btn" onclick="filtrarPosicion('Arquero',this)">Arqueros</button>
+        <button class="tab-btn" onclick="filtrarPosicion('Defensor',this)">Defensores</button>
+        <button class="tab-btn" onclick="filtrarPosicion('Mediocampista',this)">Mediocampistas</button>
+        <button class="tab-btn" onclick="filtrarPosicion('Delantero',this)">Delanteros</button>
+      </div>
+      <div class="toggle-vista">
+        <button class="toggle-btn activo" id="btn-grilla" onclick="setVista('grilla')">&#9638; Grilla</button>
+        <button class="toggle-btn" id="btn-lista" onclick="setVista('lista')">&#9776; Lista</button>
+      </div>
+    </div>
+
+    <div id="grid-jugadores" class="grid-jugadores">
+      <div class="cargando" style="grid-column:1/-1">Cargando plantel...</div>
+    </div>
+
+    <table id="tabla-plantel" class="tabla-plantel">
+      <thead>
+        <tr>
+          <th class="col-foto"></th>
+          <th>#</th><th>Jugador</th><th>Pos.</th>
+          <th>Edad</th><th>Nac.</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-plantel-body"></tbody>
+    </table>
+
+    <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+  </div>
+</main>
+<footer>
+  <div class="pagina">
+    <div class="pie">Club Atlético Independiente &bull; Avellaneda, Buenos Aires &bull; Est. 1905</div>
+  </div>
+</footer>
+
+<script>
+  // ════════════════════════════════════════════════
+  //  PLANTEL — lee /api/plantel (JSON de FotMob)
+  // ════════════════════════════════════════════════
+  let JUGADORES = [];
+  let FILTRO_POS = 'todos';
+  let VISTA = 'grilla';
+
+  const POS_ORD = { Arquero:1, Defensor:2, Mediocampista:3, Delantero:4 };
+
+  function renderFecha() {
+    const d = new Date();
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('meta-fecha').textContent =
+      `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  function iniciales(nombre) {
+    return (nombre || '?').split(' ').slice(0,2).map(p => p[0] || '').join('').toUpperCase();
+  }
+
+  function calcularEdad(fechaNac) {
+    if (!fechaNac) return '—';
+    const hoy = new Date();
+    const nac = new Date(fechaNac);
+    let edad = hoy.getFullYear() - nac.getFullYear();
+    if (hoy < new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate())) edad--;
+    return edad;
+  }
+
+  // ── Helper inteligente para la foto del jugador ──
+  function fotoJugador(id, nombre, esGrilla) {
+    const phClass = esGrilla ? 'tarjeta-foto-ph' : 'col-foto-ph';
+    const inicialesStr = iniciales(nombre);
+    
+    // Si ni siquiera hay ID, devolvemos el div normal
+    if (!id) return `<div class="${phClass}">${inicialesStr}</div>`;
+
+    // Para el fallback del onerror, usamos &quot; para no romper las comillas del atributo HTML
+    const fallbackEscapado = `<div class=&quot;${phClass}&quot;>${inicialesStr}</div>`;
+    
+    return `<img src="/img/jugadores/${id}.jpg" alt="${nombre}" loading="lazy" onerror="this.onerror=null; this.outerHTML='${fallbackEscapado}'">`;
+  }
+
+  function jugadoresFiltrados() {
+    return [...JUGADORES]
+      .filter(j => FILTRO_POS === 'todos' || j.posicion === FILTRO_POS)
+      .sort((a,b) => {
+        const pa = POS_ORD[a.posicion] || 9;
+        const pb = POS_ORD[b.posicion] || 9;
+        return pa !== pb ? pa - pb : (a.nombre > b.nombre ? 1 : -1);
+      });
+  }
+
+  function renderGrilla(lista) {
+    const grid = document.getElementById('grid-jugadores');
+    if (!lista.length) {
+      grid.innerHTML = '<div class="sin-datos" style="grid-column:1/-1">No hay jugadores para este filtro.</div>';
+      return;
+    }
+    grid.innerHTML = lista.map(j => {
+      const fotoHTML = fotoJugador(j.id, j.nombre, true);
+      const edad = calcularEdad(j.fecha_nac);
+      return `
+        <div class="tarjeta-jugador">
+          <div class="tarjeta-foto">
+            ${fotoHTML}
+            <span class="tarjeta-numero">${j.numero ?? '—'}</span>
+            <span class="tarjeta-pos-badge">${j.posicion?.substring(0,3).toUpperCase() || '—'}</span>
+          </div>
+          <div class="tarjeta-info">
+            <div class="tarjeta-nombre">${j.nombre.split(' ').slice(-1)[0]}</div>
+            <div class="tarjeta-nombre-completo">${j.nombre}</div>
+            <div class="tarjeta-meta">
+              ${edad !== '—' ? `<span>${edad} años</span>` : ''}
+              ${j.nacionalidad ? `<span>${j.nacionalidad}</span>` : ''}
+            </div>
+            <div class="tarjeta-stats">
+              <div class="tarjeta-stat">
+                <span class="tarjeta-stat-num">${j.numero ?? '—'}</span>
+                <span class="tarjeta-stat-label">Dorsal</span>
+              </div>
+              <div class="tarjeta-stat">
+                <span class="tarjeta-stat-num">${j.posicion?.substring(0,3) || '—'}</span>
+                <span class="tarjeta-stat-label">Posición</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderTabla(lista) {
+    const tbody = document.getElementById('tabla-plantel-body');
+    if (!lista.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="sin-datos">Sin jugadores.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = lista.map(j => {
+      const edad     = calcularEdad(j.fecha_nac);
+      const fotoHTML = fotoJugador(j.id, j.nombre, false);
+      return `
+        <tr>
+          <td class="col-foto">${fotoHTML}</td>
+          <td class="col-num">${j.numero ?? '—'}</td>
+          <td class="col-nombre">
+            ${j.nombre}
+            <small>${j.posicion || '—'}</small>
+          </td>
+          <td class="col-pos">${j.posicion?.substring(0,3).toUpperCase() || '—'}</td>
+          <td class="col-edad">${edad}</td>
+          <td class="col-nac">${j.nacionalidad || '—'}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function renderActual() {
+    const lista = jugadoresFiltrados();
+    if (VISTA === 'grilla') renderGrilla(lista);
+    else renderTabla(lista);
+  }
+
+  function setVista(vista) {
+    VISTA = vista;
+    const grid  = document.getElementById('grid-jugadores');
+    const tabla = document.getElementById('tabla-plantel');
+    document.getElementById('btn-grilla').classList.toggle('activo', vista === 'grilla');
+    document.getElementById('btn-lista').classList.toggle('activo', vista === 'lista');
+    grid.style.display  = vista === 'grilla' ? '' : 'none';
+    tabla.style.display = vista === 'lista'  ? '' : 'none';
+    renderActual();
+  }
+
+  function filtrarPosicion(pos, btn) {
+    FILTRO_POS = pos;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    renderActual();
+  }
+
+  async function poblarSelectorTemporadas() {
+    const res  = await fetch('/api/seasons');
+    const json = await res.json();
+    const seasons = json.data || [];
+    const sel = document.getElementById('sel-temporada');
+    sel.innerHTML = '';
+    seasons.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      sel.appendChild(opt);
+    });
+    return seasons[0];
+  }
+
+  async function cargarTemporada(season) {
+    JUGADORES = [];
+    const grid = document.getElementById('grid-jugadores');
+    grid.style.display = '';
+    document.getElementById('tabla-plantel').style.display = 'none';
+    grid.innerHTML = `<div class="cargando" style="grid-column:1/-1">Cargando plantel ${season}...</div>`;
+
+    try {
+      // El plantel siempre es el más reciente — si se necesita por temporada
+      // se puede extender el scraper para guardar plantel_{season}.json
+      const res  = await fetch('/api/plantel');
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error);
+      JUGADORES = json.data;
+      if (!JUGADORES.length) throw new Error('Sin jugadores');
+      renderActual();
+    } catch (err) {
+      grid.innerHTML = `
+        <div class="sin-datos" style="grid-column:1/-1">
+          <strong>Sin datos de plantel.</strong><br>
+          Corré <code>npm run scrape</code> para descargar los datos.<br>
+          <small>${err.message}</small>
+        </div>`;
+    }
+  }
+
+  async function init() {
+    renderFecha();
+    const season = await poblarSelectorTemporadas();
+    await cargarTemporada(season);
+  }
+
+  init();
+</script>
+</body>
+</html>

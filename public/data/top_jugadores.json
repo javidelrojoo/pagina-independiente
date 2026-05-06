@@ -1,0 +1,62 @@
+{
+  "goleadores": [
+    {
+      "id": 425711,
+      "nombre": "Gabriel Ávalos",
+      "valor": 9,
+      "rank": 1
+    },
+    {
+      "id": 1398532,
+      "nombre": "Matías Abaldo",
+      "valor": 5,
+      "rank": 10
+    },
+    {
+      "id": 1404859,
+      "nombre": "Maximiliano Gutiérrez",
+      "valor": 2,
+      "rank": 56
+    }
+  ],
+  "asistidores": [
+    {
+      "id": 425711,
+      "nombre": "Gabriel Ávalos",
+      "valor": 5,
+      "rank": 4
+    },
+    {
+      "id": 362229,
+      "nombre": "Ignacio Malcorra",
+      "valor": 3,
+      "rank": 21
+    },
+    {
+      "id": 207642,
+      "nombre": "Santiago Arias",
+      "valor": 2,
+      "rank": 67
+    }
+  ],
+  "mejor_rating": [
+    {
+      "id": 425711,
+      "nombre": "Gabriel Ávalos",
+      "valor": 7.49,
+      "rank": 10
+    },
+    {
+      "id": 1206583,
+      "nombre": "Kevin Lomónaco",
+      "valor": 7.24,
+      "rank": 70
+    },
+    {
+      "id": 1033290,
+      "nombre": "Facundo Zabala",
+      "valor": 7.09,
+      "rank": 120
+    }
+  ]
+}

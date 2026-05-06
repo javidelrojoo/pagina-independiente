@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Club Atlético Independiente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rojo: #c0000a;
+      --rojo-oscuro: #8a0008;
+      --rojo-suave: #fef0f0;
+      --tinta: #1a1612;
+      --tinta-media: #4a4540;
+      --tinta-suave: #7a746e;
+      --papel: #f5f0e8;
+      --papel-oscuro: #ede7d9;
+      --papel-claro: #faf7f2;
+      --borde: #c8bfb0;
+      --borde-fuerte: #8a8070;
+      --fuente-titulo: 'Playfair Display', Georgia, serif;
+      --fuente-cuerpo: 'Libre Baskerville', Georgia, serif;
+      --fuente-cabeza: 'IM Fell English SC', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--papel);
+      color: var(--tinta);
+      font-family: var(--fuente-cuerpo);
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Textura de papel (patrón CSS) ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.018) 28px, rgba(0,0,0,0.018) 29px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout principal ── */
+    .pagina {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ════════════════════════════
+       CABECERA / MASTHEAD
+    ════════════════════════════ */
+    .masthead {
+      border-top: 6px solid var(--rojo);
+      border-bottom: 4px solid var(--rojo);
+      padding: 0.6rem 0 0.8rem;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-family: var(--fuente-cuerpo);
+      padding: 0 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .masthead-linea {
+      border: none;
+      border-top: 1px solid var(--borde);
+      margin: 0.4rem 0;
+    }
+
+    .masthead-escudo {
+      display: block;
+      margin: 0 auto 0.3rem;
+      width: 56px;
+      height: 66px;
+    }
+
+    .masthead-titulo {
+      font-family: var(--fuente-cabeza);
+      font-size: clamp(42px, 7vw, 82px);
+      letter-spacing: 0.04em;
+      color: var(--tinta);
+      line-height: 1;
+      margin-bottom: 0.1rem;
+    }
+
+    .masthead-subtitulo {
+      font-family: var(--fuente-cuerpo);
+      font-size: 10px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Banda roja ── */
+    .banda-roja {
+      background: var(--rojo);
+      color: #fff;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 5px 0;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    /* ════════════════════════════
+       NAVEGACIÓN
+    ════════════════════════════ */
+    .nav-principal {
+      border-bottom: 2px solid var(--tinta);
+      background: var(--papel-claro);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-lista {
+      display: flex;
+      list-style: none;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .nav-lista a {
+      display: block;
+      padding: 10px 18px;
+      font-family: var(--fuente-cuerpo);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tinta-media);
+      text-decoration: none;
+      border-right: 1px solid var(--borde);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-lista li:first-child a { border-left: 1px solid var(--borde); }
+
+    .nav-lista a:hover,
+    .nav-lista a.activo {
+      background: var(--rojo);
+      color: #fff;
+    }
+
+    /* ════════════════════════════
+       GRID PRINCIPAL
+    ════════════════════════════ */
+    .contenido-principal {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 0;
+      border-bottom: 2px solid var(--borde-fuerte);
+      margin-bottom: 0;
+    }
+
+    .columna-izq {
+      border-right: 1px solid var(--borde);
+      padding: 1.5rem 1.5rem 1.5rem 0;
+    }
+
+    .columna-der {
+      padding: 1.5rem 0 1.5rem 1.5rem;
+    }
+
+    /* ════════════════════════════
+       ETIQUETAS DE SECCIÓN
+    ════════════════════════════ */
+    .etiqueta-seccion {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      border-top: 2px solid var(--rojo);
+      border-bottom: 1px solid var(--borde);
+      padding: 3px 0 2px;
+      margin-bottom: 0.75rem;
+      width: 100%;
+    }
+
+    .etiqueta-seccion span {
+      background: var(--rojo);
+      color: #fff;
+      padding: 2px 8px;
+      margin-right: 6px;
+    }
+
+    /* ════════════════════════════
+       NOTA PRINCIPAL (PORTADA)
+    ════════════════════════════ */
+    .nota-principal h1 {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--tinta);
+      margin-bottom: 0.5rem;
+    }
+
+    .filete {
+      border: none;
+      border-top: 1px solid var(--borde);
+      margin: 0.5rem 0;
+    }
+
+    .filete-doble {
+      border: none;
+      border-top: 3px double var(--borde-fuerte);
+      margin: 0.75rem 0;
+    }
+
+    .volanta {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      margin-bottom: 0.4rem;
+    }
+
+    .bajada {
+      font-size: 13px;
+      color: var(--tinta-media);
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    /* Drop cap */
+    .cuerpo-nota p:first-of-type::first-letter {
+      float: left;
+      font-family: var(--fuente-titulo);
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 0.8;
+      margin: 6px 8px 0 0;
+      color: var(--rojo);
+    }
+
+    .cuerpo-nota p {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--tinta);
+      margin-bottom: 0.75rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* ── Columnas de texto ── */
+    .cuerpo-nota.dos-columnas {
+      column-count: 2;
+      column-gap: 1.5rem;
+      column-rule: 1px solid var(--borde);
+    }
+
+    /* ════════════════════════════
+       RESULTADO DESTACADO
+    ════════════════════════════ */
+    .resultado-destacado {
+      border: 2px solid var(--tinta);
+      padding: 1rem;
+      margin: 1.25rem 0;
+      background: var(--papel-claro);
+      text-align: center;
+      position: relative;
+    }
+
+    .resultado-destacado::before {
+      content: '◆ ÚLTIMO RESULTADO ◆';
+      position: absolute;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--papel-claro);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      color: var(--tinta-suave);
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    .resultado-competicion {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      margin-bottom: 0.5rem;
+    }
+
+    .resultado-fila {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .resultado-equipo {
+      font-family: var(--fuente-titulo);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      flex: 1;
+    }
+
+    .resultado-equipo.local { text-align: right; }
+    .resultado-equipo.visita { text-align: left; }
+
+    .resultado-marcador {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .resultado-num {
+      font-family: var(--fuente-titulo);
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--rojo);
+      line-height: 1;
+    }
+
+    .resultado-guion {
+      font-size: 24px;
+      color: var(--tinta-suave);
+      font-weight: 300;
+    }
+
+    .resultado-fecha {
+      font-size: 10px;
+      color: var(--tinta-suave);
+      margin-top: 0.3rem;
+      letter-spacing: 0.08em;
+    }
+
+    .resultado-goleadores {
+      font-size: 11px;
+      color: var(--tinta-media);
+      margin-top: 0.4rem;
+      font-style: italic;
+    }
+
+    /* ════════════════════════════
+       NOTAS SECUNDARIAS (GRILLA)
+    ════════════════════════════ */
+    .grilla-notas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 2px solid var(--borde-fuerte);
+      margin-top: 1.25rem;
+    }
+
+    .nota-secundaria {
+      padding: 1rem 0;
+    }
+
+    .nota-secundaria:not(:last-child) {
+      border-right: 1px solid var(--borde);
+      padding-right: 1rem;
+      margin-right: 0;
+    }
+
+    .nota-secundaria:last-child {
+      padding-left: 1rem;
+    }
+
+    .nota-secundaria h3 {
+      font-family: var(--fuente-titulo);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 0.35rem;
+      color: var(--tinta);
+    }
+
+    .nota-secundaria p {
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--tinta-media);
+      font-style: italic;
+    }
+
+    /* ════════════════════════════
+       COLUMNA DERECHA
+    ════════════════════════════ */
+
+    /* Próximos partidos */
+    .fixture-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+      font-size: 12px;
+    }
+
+    .fixture-item:last-child { border-bottom: none; }
+
+    .fixture-fecha {
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      color: var(--tinta-suave);
+      min-width: 56px;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    .fixture-rival {
+      flex: 1;
+      color: var(--tinta);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .fixture-condicion {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      padding: 2px 5px;
+      border: 1px solid var(--borde);
+      color: var(--tinta-suave);
+    }
+
+    .fixture-condicion.local {
+      background: var(--rojo);
+      border-color: var(--rojo);
+      color: #fff;
+    }
+
+    /* Jugadores históricos */
+    .jugador-historico {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+      align-items: flex-start;
+    }
+
+    .jugador-historico:last-child { border-bottom: none; }
+
+    .jugador-numero {
+      font-family: var(--fuente-titulo);
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--papel-oscuro);
+      line-height: 1;
+      min-width: 28px;
+      text-align: right;
+    }
+
+    .jugador-info { flex: 1; }
+
+    .jugador-nombre {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--tinta);
+      line-height: 1.2;
+    }
+
+    .jugador-apodo {
+      font-size: 11px;
+      color: var(--rojo);
+      font-style: italic;
+    }
+
+    .jugador-datos {
+      font-size: 10px;
+      color: var(--tinta-suave);
+      letter-spacing: 0.06em;
+      margin-top: 1px;
+    }
+
+    /* Estadísticas en cifras */
+    .cifra-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+    }
+
+    .cifra-item:last-child { border-bottom: none; }
+
+    .cifra-label {
+      font-size: 11px;
+      color: var(--tinta-media);
+    }
+
+    .cifra-valor {
+      font-family: var(--fuente-titulo);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--rojo);
+      line-height: 1;
+    }
+
+    /* Separador ornamental */
+    .ornamento {
+      text-align: center;
+      color: var(--borde-fuerte);
+      font-size: 14px;
+      letter-spacing: 10px;
+      margin: 0.75rem 0;
+    }
+
+    /* ════════════════════════════
+       BANDA INFERIOR — 3 COLS
+    ════════════════════════════ */
+    .banda-inferior {
+      border-top: 3px double var(--borde-fuerte);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+
+    .banda-col {
+      padding: 1.25rem 1.25rem 1.5rem;
+      border-right: 1px solid var(--borde);
+    }
+
+    .banda-col:first-child { padding-left: 0; }
+    .banda-col:last-child { border-right: none; padding-right: 0; }
+
+    .banda-col-titulo {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      border-bottom: 2px solid var(--rojo);
+      padding-bottom: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Tabla de posiciones compacta */
+    .tabla-posiciones {
+      width: 100%;
+      font-size: 11px;
+      border-collapse: collapse;
+    }
+
+    .tabla-posiciones th {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      text-align: right;
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--borde);
+      font-weight: 400;
+    }
+
+    .tabla-posiciones th:first-child,
+    .tabla-posiciones td:first-child { text-align: left; }
+
+    .tabla-posiciones td {
+      padding: 4px 4px;
+      text-align: right;
+      border-bottom: 1px solid var(--papel-oscuro);
+      color: var(--tinta-media);
+    }
+
+    .tabla-posiciones tr.destacado td {
+      color: var(--rojo);
+      font-weight: 700;
+    }
+
+    /* Lista de campeonatos */
+    .campeonato-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+      font-size: 12px;
+    }
+
+    .campeonato-item:last-child { border-bottom: none; }
+
+    .campeonato-estrella {
+      color: var(--rojo);
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .campeonato-nombre {
+      flex: 1;
+      color: var(--tinta);
+    }
+
+    .campeonato-anio {
+      font-family: var(--fuente-titulo);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--tinta-suave);
+    }
+
+    /* Plantel actual — lista compacta */
+    .plantel-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+    }
+
+    .plantel-item:last-child { border-bottom: none; }
+
+    .plantel-dorsal {
+      font-family: var(--fuente-titulo);
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--borde-fuerte);
+      min-width: 22px;
+      text-align: right;
+    }
+
+    .plantel-nombre {
+      flex: 1;
+      font-size: 12px;
+      color: var(--tinta);
+    }
+
+    .plantel-posicion {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--tinta-suave);
+      text-transform: uppercase;
+    }
+
+    /* ════════════════════════════
+       PIE DE PÁGINA
+    ════════════════════════════ */
+    .pie {
+      border-top: 4px solid var(--rojo);
+      padding: 0.75rem 0;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+    }
+
+    /* ════════════════════════════
+       LOADING STATE
+    ════════════════════════════ */
+    .cargando {
+      text-align: center;
+      padding: 2rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-style: italic;
+    }
+
+    /* ════════════════════════════
+       UTILIDADES
+    ════════════════════════════ */
+    .texto-rojo { color: var(--rojo); }
+    .negrita { font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .contenido-principal { grid-template-columns: 1fr; }
+      .columna-izq { border-right: none; padding-right: 0; border-bottom: 2px solid var(--borde); }
+      .columna-der { padding-left: 0; }
+      .cuerpo-nota.dos-columnas { column-count: 1; }
+      .banda-inferior { grid-template-columns: 1fr; }
+      .banda-col { border-right: none; border-bottom: 1px solid var(--borde); padding: 1rem 0; }
+      .grilla-notas { grid-template-columns: 1fr; }
+      .nota-secundaria:not(:last-child) { border-right: none; border-bottom: 1px solid var(--borde); padding-right: 0; }
+      .nota-secundaria:last-child { padding-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     CABECERA
+══════════════════════════════ -->
+<header>
+  <div class="pagina">
+    <div class="masthead">
+      <div class="masthead-meta">
+        <span id="meta-fecha">Cargando...</span>
+        <span>El Rojo de Avellaneda</span>
+        <span>Fundado en 1905 &bull; Avellaneda, Buenos Aires</span>
+      </div>
+      <hr class="masthead-linea" />
+
+      <svg class="masthead-escudo" viewBox="0 0 56 66" xmlns="http://www.w3.org/2000/svg" aria-label="Escudo del club">
+        <path d="M28 2 L54 14 L54 42 C54 54 28 64 28 64 C28 64 2 54 2 42 L2 14 Z" fill="#c0000a"/>
+        <path d="M28 2 L54 14 L54 42 C54 54 28 64 28 64 C28 64 2 54 2 42 L2 14 Z" fill="none" stroke="#8a0008" stroke-width="2"/>
+        <rect x="2" y="26" width="52" height="14" fill="#fff"/>
+        <text x="28" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="bold" fill="#fff">CA</text>
+        <text x="28" y="46" text-anchor="middle" font-family="Georgia,serif" font-size="5.5" fill="#c0000a" letter-spacing="1">INDEPENDIENTE</text>
+      </svg>
+
+      <h1 class="masthead-titulo">Independiente</h1>
+      <p class="masthead-subtitulo">Club Atlético Independiente &mdash; El Rey de Copas</p>
+      <hr class="masthead-linea" />
+    </div>
+  </div>
+  <div class="banda-roja">&#9733; Noticias &bull; Historia &bull; Plantel &bull; Estadísticas &bull; Campeonatos &#9733;</div>
+
+  <nav class="nav-principal" aria-label="Navegación principal">
+    <ul class="nav-lista">
+      <li><a href="index.html" class="activo">Inicio</a></li>
+      <li><a href="calendario.html">Calendario</a></li>
+      <li><a href="liga.html">Liga Actual</a></li>
+      <li><a href="historial.html">Historial</a></li>
+      <li><a href="plantel.html">Plantel</a></li>
+      <li><a href="campeonatos.html">Campeonatos</a></li>
+      <li><a href="estadisticas.html">Estadísticas</a></li>
+      <li><a href="historicos.html">Ídolos</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════
+     CONTENIDO PRINCIPAL
+══════════════════════════════ -->
+<main>
+  <div class="pagina">
+    <div class="contenido-principal">
+
+      <!-- ── Columna izquierda (nota principal) ── -->
+      <div class="columna-izq">
+
+        <div class="etiqueta-seccion">
+          <span>Editorial</span> Temporada en curso
+        </div>
+
+        <article class="nota-principal">
+          <p class="volanta">El Rojo de Avellaneda &bull; Desde 1905</p>
+          <h1>El Rey de Copas escribe cada día una nueva página de gloria</h1>
+          <hr class="filete" />
+          <p class="bajada">
+            Siete Copas Libertadores, dos Sudamericanas y dieciséis títulos locales avalan
+            la historia más grande del fútbol de Avellaneda.
+          </p>
+          <div class="cuerpo-nota dos-columnas">
+            <p>
+              Desde aquellos días fundacionales de 1905, cuando un grupo de obreros decidió
+              crear un club propio en las calles de Avellaneda, el Club Atlético Independiente
+              forjó una identidad que trasciende generaciones. El rojo y el blanco se
+              convirtieron en sinónimos de coraje, técnica y ambición continental.
+            </p>
+            <p>
+              Fue en la década del sesenta cuando el mundo comenzó a conocer la magnitud del
+              proyecto: dos Copas Libertadores consecutivas en 1964 y 1965 marcaron el inicio
+              de una hegemonía sin igual en el fútbol sudamericano. La era dorada de los años
+              setenta solidificó el apodo que aún resuena en cada estadio del continente:
+              <em>El Rey de Copas</em>.
+            </p>
+            <p>
+              Figuras como Ricardo Bochini, Mario Kempes, Daniel Bertoni y Jorge Burruchaga
+              vistieron la camiseta roja con el orgullo de quienes saben que representan algo
+              más que un club de fútbol. Representan a un pueblo.
+            </p>
+          </div>
+        </article>
+
+        <!-- Último resultado (se carga con JS) -->
+        <div id="ultimo-resultado" class="cargando">Cargando resultado...</div>
+
+        <hr class="filete-doble" />
+
+        <!-- Notas secundarias -->
+        <div class="grilla-notas" id="notas-secundarias">
+          <div class="cargando">Cargando...</div>
+        </div>
+
+      </div>
+
+      <!-- ── Columna derecha (sidebar) ── -->
+      <div class="columna-der">
+
+        <!-- Próximos partidos -->
+        <section aria-labelledby="titulo-proximos">
+          <div class="etiqueta-seccion">
+            <span>Agenda</span> Próximos partidos
+          </div>
+          <div id="proximos-partidos" class="cargando">Cargando...</div>
+        </section>
+
+        <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+
+        <!-- Ídolos históricos -->
+        <section aria-labelledby="titulo-historicos">
+          <div class="etiqueta-seccion">
+            <span>Ídolos</span> Figuras históricas
+          </div>
+          <div id="jugadores-historicos" class="cargando">Cargando...</div>
+        </section>
+
+        <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+
+        <!-- Cifras del club -->
+        <section aria-labelledby="titulo-cifras">
+          <div class="etiqueta-seccion">
+            <span>En cifras</span> Palmarés global
+          </div>
+          <div id="cifras-club"></div>
+        </section>
+
+      </div>
+    </div><!-- /contenido-principal -->
+
+    <!-- ══════════════════════════════
+         BANDA INFERIOR — 3 SECCIONES
+    ══════════════════════════════ -->
+    <div class="banda-inferior">
+
+      <!-- Posiciones de temporada -->
+      <div class="banda-col">
+        <div class="banda-col-titulo">&#9632; Tabla — Liga Profesional</div>
+        <table class="tabla-posiciones" id="tabla-posiciones">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Equipo</th>
+              <th>PJ</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-posiciones-body">
+            <tr><td colspan="4" class="cargando">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Últimos campeonatos -->
+      <div class="banda-col">
+        <div class="banda-col-titulo">&#9632; Últimos títulos</div>
+        <div id="lista-campeonatos" class="cargando">Cargando...</div>
+      </div>
+
+      <!-- Plantel actual -->
+      <div class="banda-col">
+        <div class="banda-col-titulo">&#9632; Plantel actual</div>
+        <div id="plantel-actual" class="cargando">Cargando...</div>
+      </div>
+
+    </div><!-- /banda-inferior -->
+  </div><!-- /pagina -->
+</main>
+
+<!-- ══════════════════════════════
+     PIE
+══════════════════════════════ -->
+<footer>
+  <div class="pagina">
+    <div class="pie">
+      Club Atlético Independiente &bull; Avellaneda, Buenos Aires &bull; Est. 1905
+      &bull; Todos los derechos reservados
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════
+     JAVASCRIPT
+══════════════════════════════ -->
+<script>
+  // ════════════════════════════════════════════════
+  //  INDEX — lee JSONs generados por scraper FotMob
+  // ════════════════════════════════════════════════
+
+  async function fetchAPI(ruta) {
+    const res  = await fetch(ruta);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || `Error en ${ruta}`);
+    return json.data;
+  }
+
+  function renderFecha() {
+    const d = new Date();
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                   'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('meta-fecha').textContent =
+      `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  function formatearFecha(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${d} ${meses[m-1]}`;
+  }
+
+  function formatearFechaLarga(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                   'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    return `${d} de ${meses[m-1]} de ${y}`;
+  }
+
+  // ── Último resultado ──
+  function renderUltimoResultado(partidos) {
+    const jugados = partidos.filter(p => p.terminado)
+      .sort((a, b) => (b.fecha||'').localeCompare(a.fecha||''));
+    if (!jugados.length) { document.getElementById('ultimo-resultado').textContent = ''; return; }
+
+    const p = jugados[0];
+    const localNombre  = p.condicion === 'local' ? 'Independiente' : p.rival;
+    const visitaNombre = p.condicion === 'local' ? p.rival : 'Independiente';
+    const localGoles   = p.condicion === 'local' ? p.goles_favor : p.goles_contra;
+    const visitaGoles  = p.condicion === 'local' ? p.goles_contra : p.goles_favor;
+    const resColor = p.resultado==='G' ? '#1a6e1a' : p.resultado==='E' ? '#7a6010' : '#8a0008';
+    const resTexto = p.resultado==='G' ? 'VICTORIA' : p.resultado==='E' ? 'EMPATE' : 'DERROTA';
+
+    document.getElementById('ultimo-resultado').innerHTML = `
+      <div class="resultado-destacado">
+        <div class="resultado-competicion">${p.competicion} &bull; ${formatearFechaLarga(p.fecha)}</div>
+        <div class="resultado-fila">
+          <span class="resultado-equipo local">${localNombre}</span>
+          <div class="resultado-marcador">
+            <span class="resultado-num">${localGoles}</span>
+            <span class="resultado-guion">&mdash;</span>
+            <span class="resultado-num">${visitaGoles}</span>
+          </div>
+          <span class="resultado-equipo visita">${visitaNombre}</span>
+        </div>
+        <div class="resultado-fecha" style="color:${resColor};font-weight:700;letter-spacing:.1em">${resTexto}</div>
+      </div>`;
+  }
+
+  // ── Notas secundarias (2 partidos anteriores al último) ──
+  function renderNotasSecundarias(partidos) {
+    const jugados = partidos.filter(p => p.terminado)
+      .sort((a,b) => (b.fecha||'').localeCompare(a.fecha||'')).slice(1, 3);
+    const html = jugados.map(p => {
+      const res = p.resultado==='G' ? `${p.goles_favor}-${p.goles_contra} Victoria`
+                : p.resultado==='E' ? `${p.goles_favor}-${p.goles_contra} Empate`
+                : `${p.goles_favor}-${p.goles_contra} Derrota`;
+      return `
+        <div class="nota-secundaria">
+          <p class="volanta" style="font-size:9px">${p.competicion} &bull; ${formatearFechaLarga(p.fecha)}</p>
+          <h3>Independiente ${res} ante ${p.rival}</h3>
+          <p>${p.condicion === 'local' ? 'De local' : 'De visitante'}${p.estadio ? ' en ' + p.estadio : ''}.</p>
+        </div>`;
+    }).join('');
+    document.getElementById('notas-secundarias').innerHTML = html || '<p class="cargando">Sin datos</p>';
+  }
+
+  // ── Logo helper ──
+  // Devuelve un <img> con el logo del equipo, o un placeholder si no existe.
+  // Los logos van en public/img/equipos/{id}.png
+  function logoEquipo(id, nombre, size = 44) {
+    if (!id) return '';
+    return `<img
+      src="/img/equipos/${id}.png"
+      alt="${nombre || ''}"
+      width="${size}" height="${size}"
+      style="object-fit:contain;vertical-align:middle;flex-shrink:0"
+      onerror="this.style.display='none'"
+    >`;
+  }
+
+  // ── Próximos partidos ──
+  function renderProximosPartidos(partidos) {
+    const hoyStr = new Date().toISOString().split('T')[0];
+    const proximos = partidos.filter(p => !p.terminado && !p.en_curso && (p.fecha||'') >= hoyStr)
+      .sort((a,b) => (a.fecha||'').localeCompare(b.fecha||'')).slice(0, 6);
+
+    if (!proximos.length) {
+      document.getElementById('proximos-partidos').textContent = 'Sin partidos programados.';
+      return;
+    }
+    document.getElementById('proximos-partidos').innerHTML = proximos.map(p => `
+      <div class="fixture-item">
+        <span class="fixture-fecha">${formatearFecha(p.fecha)}</span>
+        <span class="fixture-rival" style="display:flex;align-items:center;gap:6px">
+          ${logoEquipo(p.rival_id, p.rival)}
+          ${p.rival}
+        </span>
+        <span class="fixture-condicion ${p.condicion}">${p.condicion === 'local' ? 'LOC' : 'VIS'}</span>
+      </div>`).join('');
+  }
+
+  // ── Ídolos históricos — datos estáticos (no cambian con el scraper) ──
+  function renderHistoricos() {
+    const historicos = [
+      { nombre: 'Ricardo Bochini',  apodo: 'El Bocha',    posicion: 'Mediocampista', anios: '1972–1991', partidos: 639 },
+      { nombre: 'Arsenio Erico',    apodo: 'El Indio',    posicion: 'Delantero',     anios: '1934–1947', partidos: 295 },
+      { nombre: 'Daniel Bertoni',   apodo: 'El Toro',     posicion: 'Delantero',     anios: '1973–1981', partidos: 259 },
+      { nombre: 'Jorge Burruchaga', apodo: 'El Burru',    posicion: 'Mediocampista', anios: '1980–1988', partidos: 217 },
+      { nombre: 'Roque Avallay',    apodo: null,           posicion: 'Defensor',      anios: '1960–1973', partidos: 410 },
+    ];
+    document.getElementById('jugadores-historicos').innerHTML = historicos.map((j, i) => `
+      <div class="jugador-historico">
+        <div class="jugador-numero">${i + 1}</div>
+        <div class="jugador-info">
+          <div class="jugador-nombre">${j.nombre}</div>
+          ${j.apodo ? `<div class="jugador-apodo">"${j.apodo}"</div>` : ''}
+          <div class="jugador-datos">${j.posicion} &bull; ${j.anios} &bull; ${j.partidos} partidos</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── Cifras del club — datos estáticos ──
+  function renderCifras() {
+    const cifras = [
+      { label: 'Copas Libertadores', valor: 7  },
+      { label: 'Copas Sudamericana', valor: 2  },
+      { label: 'Títulos locales',    valor: 16 },
+      { label: 'Total de títulos',   valor: 26 },
+    ];
+    document.getElementById('cifras-club').innerHTML = cifras.map(c => `
+      <div class="cifra-item">
+        <span class="cifra-label">${c.label}</span>
+        <span class="cifra-valor">${c.valor}</span>
+      </div>`).join('');
+  }
+
+  // ── Tabla de posiciones ──
+  function renderTabla(standings) {
+    if (!standings || !standings.length) {
+      document.getElementById('tabla-posiciones-body').innerHTML =
+        '<tr><td colspan="4" style="text-align:center;font-style:italic;color:var(--tinta-suave);font-size:11px;padding:8px">Sin datos</td></tr>';
+      return;
+    }
+    document.getElementById('tabla-posiciones-body').innerHTML =
+      standings.slice(0, 5).map(s => `
+        <tr class="${s.es_cai ? 'destacado' : ''}">
+          <td>${s.pos}</td>
+          <td style="display:flex;align-items:center;gap:5px">
+            ${logoEquipo(s.equipo_id, s.equipo)}
+            ${s.es_cai ? '<strong>Independiente</strong>' : s.equipo}
+          </td>
+          <td>${s.pj}</td>
+          <td>${s.pts}</td>
+        </tr>`).join('');
+  }
+
+  // ── Campeonatos — datos estáticos ──
+  function renderCampeonatos() {
+    const titulos = [
+      { nombre: 'Copa Libertadores', anio: 1984 },
+      { nombre: 'Copa Libertadores', anio: 1975 },
+      { nombre: 'Copa Libertadores', anio: 1974 },
+      { nombre: 'Copa Libertadores', anio: 1973 },
+      { nombre: 'Copa Libertadores', anio: 1972 },
+      { nombre: 'Copa Libertadores', anio: 1965 },
+      { nombre: 'Copa Libertadores', anio: 1964 },
+    ];
+    document.getElementById('lista-campeonatos').innerHTML = titulos.map(c => `
+      <div class="campeonato-item">
+        <span class="campeonato-estrella">&#9733;</span>
+        <span class="campeonato-nombre">${c.nombre}</span>
+        <span class="campeonato-anio">${c.anio}</span>
+      </div>`).join('');
+  }
+
+  // ── Plantel (desde /api/plantel) ──
+  function renderPlantel(plantel) {
+    if (!plantel || !plantel.length) {
+      document.getElementById('plantel-actual').innerHTML =
+        '<p style="font-size:11px;font-style:italic;color:var(--tinta-suave)">Sin datos — corré npm run scrape</p>';
+      return;
+    }
+    const POS_ORD = { Arquero:1, Defensor:2, Mediocampista:3, Delantero:4 };
+    const sorted  = [...plantel].sort((a,b) => (POS_ORD[a.posicion]||5) - (POS_ORD[b.posicion]||5));
+    const posCorto = { Arquero:'POR', Defensor:'DEF', Mediocampista:'MED', Delantero:'DEL' };
+    document.getElementById('plantel-actual').innerHTML = sorted.slice(0, 10).map(j => {
+      const apellido = j.nombre.split(' ').slice(-1)[0];
+      const resto    = j.nombre.split(' ').slice(0,-1).join(' ');
+      return `
+        <div class="plantel-item">
+          <span class="plantel-dorsal">${j.numero ?? '—'}</span>
+          <span class="plantel-nombre">${apellido}${resto ? ', ' + resto : ''}</span>
+          <span class="plantel-posicion">${posCorto[j.posicion] || '—'}</span>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Init ──
+  async function init() {
+    renderFecha();
+    // Datos estáticos — no dependen del scraper
+    renderHistoricos();
+    renderCifras();
+    renderCampeonatos();
+
+    // Datos dinámicos del scraper — cada uno falla de forma independiente
+    const [partidos, standings, plantel] = await Promise.all([
+      fetchAPI('/api/partidos').catch(() => null),
+      fetchAPI('/api/standings').catch(() => null),
+      fetchAPI('/api/plantel').catch(() => null),
+    ]);
+
+    if (partidos) {
+      renderUltimoResultado(partidos);
+      renderNotasSecundarias(partidos);
+      renderProximosPartidos(partidos);
+    } else {
+      document.getElementById('ultimo-resultado').innerHTML =
+        '<p style="text-align:center;font-style:italic;color:var(--tinta-suave);font-size:12px">Sin datos — corré npm run scrape</p>';
+      document.getElementById('notas-secundarias').innerHTML = '';
+      document.getElementById('proximos-partidos').textContent = 'Sin datos.';
+    }
+
+    renderTabla(standings || []);
+    renderPlantel(plantel || []);
+  }
+
+  init();
+</script>
+</body>
+</html>

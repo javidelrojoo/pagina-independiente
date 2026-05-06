@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario de Partidos — Club Atlético Independiente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rojo: #c0000a;
+      --rojo-oscuro: #8a0008;
+      --rojo-suave: #fef0f0;
+      --tinta: #1a1612;
+      --tinta-media: #4a4540;
+      --tinta-suave: #7a746e;
+      --papel: #f5f0e8;
+      --papel-oscuro: #ede7d9;
+      --papel-claro: #faf7f2;
+      --borde: #c8bfb0;
+      --borde-fuerte: #8a8070;
+      --verde-victoria: #1a5e1a;
+      --verde-bg: #eef6ee;
+      --amarillo-empate: #7a6010;
+      --amarillo-bg: #fdf8ea;
+      --rojo-derrota: #8a0008;
+      --fuente-titulo: 'Playfair Display', Georgia, serif;
+      --fuente-cuerpo: 'Libre Baskerville', Georgia, serif;
+      --fuente-cabeza: 'IM Fell English SC', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--papel);
+      color: var(--tinta);
+      font-family: var(--fuente-cuerpo);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.018) 28px, rgba(0,0,0,0.018) 29px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pagina {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Masthead ── */
+    .masthead {
+      border-top: 6px solid var(--rojo);
+      border-bottom: 4px solid var(--rojo);
+      padding: 0.5rem 0 0.7rem;
+      text-align: center;
+    }
+
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      padding: 0 0.25rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .masthead-linea { border: none; border-top: 1px solid var(--borde); margin: 0.35rem 0; }
+
+    .masthead-titulo {
+      font-family: var(--fuente-cabeza);
+      font-size: clamp(36px, 6vw, 68px);
+      letter-spacing: 0.04em;
+      color: var(--tinta);
+      line-height: 1;
+      margin-bottom: 0.1rem;
+    }
+
+    .masthead-subtitulo {
+      font-size: 10px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+    }
+
+    .banda-roja {
+      background: var(--rojo);
+      color: #fff;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 5px 0;
+    }
+
+    /* ── Nav ── */
+    .nav-principal {
+      border-bottom: 2px solid var(--tinta);
+      background: var(--papel-claro);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-lista { display: flex; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .nav-lista a {
+      display: block;
+      padding: 10px 18px;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tinta-media);
+      text-decoration: none;
+      border-right: 1px solid var(--borde);
+      transition: background 0.15s, color 0.15s;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    .nav-lista li:first-child a { border-left: 1px solid var(--borde); }
+    .nav-lista a:hover, .nav-lista a.activo { background: var(--rojo); color: #fff; }
+
+    /* ── Cabecera de sección ── */
+    .seccion-header {
+      border-bottom: 3px double var(--borde-fuerte);
+      padding: 1.5rem 0 1rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .seccion-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--tinta);
+      line-height: 1;
+    }
+
+    .seccion-titulo span {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-family: var(--fuente-cuerpo);
+      font-weight: 400;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ── Filtros ── */
+    .filtros {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--borde-fuerte);
+      background: var(--papel-claro);
+      flex-wrap: wrap;
+    }
+
+    .filtro-grupo {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--borde);
+    }
+
+    .filtro-grupo:last-child { border-right: none; }
+
+    .filtro-label {
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      padding: 4px 10px 2px;
+      background: var(--papel-oscuro);
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .filtro-grupo select {
+      border: none;
+      background: transparent;
+      font-family: var(--fuente-cuerpo);
+      font-size: 12px;
+      color: var(--tinta);
+      padding: 6px 10px;
+      cursor: pointer;
+      min-width: 140px;
+      outline: none;
+    }
+
+    .filtro-grupo select:focus { background: var(--rojo-suave); }
+
+    /* ── Resumen estadístico ── */
+    .resumen-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid var(--borde);
+      border-top: 3px solid var(--rojo);
+      margin: 1.25rem 0;
+      background: var(--papel-claro);
+    }
+
+    .stat-celda {
+      padding: 0.75rem 1rem;
+      text-align: center;
+      border-right: 1px solid var(--borde);
+    }
+
+    .stat-celda:last-child { border-right: none; }
+
+    .stat-celda-num {
+      font-family: var(--fuente-titulo);
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-celda-label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .num-victorias { color: var(--verde-victoria); }
+    .num-empates   { color: var(--amarillo-empate); }
+    .num-derrotas  { color: var(--rojo-derrota); }
+    .num-goles     { color: var(--rojo); }
+    .num-total     { color: var(--tinta); }
+
+    /* ── Vista de meses ── */
+    .mes-bloque {
+      margin-bottom: 2rem;
+    }
+
+    .mes-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--tinta);
+      border-bottom: 2px solid var(--tinta);
+      padding-bottom: 4px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .mes-titulo small {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-family: var(--fuente-cuerpo);
+    }
+
+    /* ── Tabla de partidos ── */
+    .tabla-partidos {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 0.5rem;
+    }
+
+    .tabla-partidos thead tr {
+      background: var(--papel-oscuro);
+      border-bottom: 2px solid var(--borde-fuerte);
+    }
+
+    .tabla-partidos th {
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-weight: 400;
+      padding: 6px 10px;
+      text-align: left;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    .tabla-partidos th.centrado { text-align: center; }
+
+    .tabla-partidos td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--papel-oscuro);
+      vertical-align: middle;
+    }
+
+    .tabla-partidos tbody tr:hover { background: var(--papel-claro); }
+
+    .tabla-partidos tbody tr:last-child td { border-bottom: none; }
+
+    /* ── Celda de fecha ── */
+    .celda-fecha {
+      white-space: nowrap;
+      color: var(--tinta-suave);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      min-width: 80px;
+    }
+
+    /* ── Celda de rival ── */
+    .celda-rival {
+      font-weight: 700;
+      color: var(--tinta);
+    }
+
+    .celda-rival .competicion-tag {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--tinta-suave);
+      font-style: italic;
+      margin-top: 1px;
+    }
+
+    /* ── Condición (local/visita) ── */
+    .cond-badge {
+      display: inline-block;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border: 1px solid var(--borde);
+      color: var(--tinta-suave);
+    }
+
+    .cond-badge.local {
+      background: var(--rojo);
+      border-color: var(--rojo);
+      color: #fff;
+    }
+
+    /* ── Resultado ── */
+    .celda-resultado { text-align: center; min-width: 80px; }
+
+    .marcador {
+      font-family: var(--fuente-titulo);
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      color: var(--tinta);
+    }
+
+    .res-badge {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      padding: 2px 7px;
+      margin-top: 2px;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    .res-G { background: var(--verde-bg); color: var(--verde-victoria); border: 1px solid #b8d8b8; }
+    .res-E { background: var(--amarillo-bg); color: var(--amarillo-empate); border: 1px solid #e0d090; }
+    .res-P { background: var(--rojo-suave); color: var(--rojo-derrota); border: 1px solid #e8b0b0; }
+
+    /* ── Pendiente ── */
+    .pendiente {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-style: italic;
+    }
+
+    /* ── Estadio ── */
+    .celda-estadio {
+      font-size: 11px;
+      color: var(--tinta-suave);
+      font-style: italic;
+      max-width: 180px;
+    }
+
+    /* ── Goleadores inline ── */
+    .celda-goles {
+      font-size: 11px;
+      color: var(--tinta-media);
+      font-style: italic;
+      max-width: 200px;
+    }
+
+    /* ── Sin resultados ── */
+    .sin-datos {
+      text-align: center;
+      padding: 3rem;
+      font-size: 13px;
+      font-style: italic;
+      color: var(--tinta-suave);
+      border: 1px dashed var(--borde);
+      margin: 1rem 0;
+    }
+
+    /* ── Ornamento ── */
+    .ornamento {
+      text-align: center;
+      color: var(--borde-fuerte);
+      font-size: 14px;
+      letter-spacing: 10px;
+      margin: 0.5rem 0 1.5rem;
+    }
+
+    /* ── Pie ── */
+    .pie {
+      border-top: 4px solid var(--rojo);
+      padding: 0.75rem 0;
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      margin-top: 2rem;
+    }
+
+    /* ── Cargando ── */
+    .cargando {
+      text-align: center;
+      padding: 2rem;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .resumen-stats { grid-template-columns: repeat(3, 1fr); }
+      .resumen-stats .stat-celda:nth-child(3) { border-right: none; }
+      .celda-estadio, .celda-goles { display: none; }
+      .filtros { flex-direction: column; }
+      .filtro-grupo { border-right: none; border-bottom: 1px solid var(--borde); }
+      .filtro-grupo:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CABECERA -->
+<header>
+  <div class="pagina">
+    <div class="masthead">
+      <div class="masthead-meta">
+        <span id="meta-fecha">—</span>
+        <span>El Rojo de Avellaneda</span>
+        <span>Fundado en 1905 &bull; Avellaneda</span>
+      </div>
+      <hr class="masthead-linea" />
+      <h1 class="masthead-titulo">Independiente</h1>
+      <p class="masthead-subtitulo">Club Atlético Independiente &mdash; El Rey de Copas</p>
+      <hr class="masthead-linea" />
+    </div>
+  </div>
+  <div class="banda-roja">&#9733; Calendario de Partidos &#9733;</div>
+
+  <nav class="nav-principal">
+    <ul class="nav-lista">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="calendario.html" class="activo">Calendario</a></li>
+      <li><a href="liga.html">Liga Actual</a></li>
+      <li><a href="historial.html">Historial</a></li>
+      <li><a href="plantel.html">Plantel</a></li>
+      <li><a href="campeonatos.html">Campeonatos</a></li>
+      <li><a href="estadisticas.html">Estadísticas</a></li>
+      <li><a href="historicos.html">Ídolos</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="pagina">
+
+    <!-- Cabecera de sección + Filtros -->
+    <div class="seccion-header">
+      <div class="seccion-titulo">
+        <span>&#9632; Fixture oficial</span>
+        Calendario de Partidos
+      </div>
+      <div class="filtros" id="filtros-container">
+        <div class="filtro-grupo">
+          <span class="filtro-label">Temporada</span>
+          <select id="filtro-anio" onchange="cargarTemporada(this.value)">
+            <option value="todos">Todas</option>
+          </select>
+        </div>
+        <div class="filtro-grupo">
+          <span class="filtro-label">Competición</span>
+          <select id="filtro-comp" onchange="aplicarFiltros()">
+            <option value="todos">Todas</option>
+          </select>
+        </div>
+        <div class="filtro-grupo">
+          <span class="filtro-label">Condición</span>
+          <select id="filtro-cond" onchange="aplicarFiltros()">
+            <option value="todos">Local y Visitante</option>
+            <option value="local">Solo local</option>
+            <option value="visita">Solo visitante</option>
+          </select>
+        </div>
+        <div class="filtro-grupo">
+          <span class="filtro-label">Resultado</span>
+          <select id="filtro-res" onchange="aplicarFiltros()">
+            <option value="todos">Todos</option>
+            <option value="G">Victorias</option>
+            <option value="E">Empates</option>
+            <option value="P">Derrotas</option>
+            <option value="pendiente">Pendientes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen estadístico -->
+    <div class="resumen-stats" id="resumen-stats">
+      <div class="stat-celda">
+        <span class="stat-celda-num num-total" id="stat-pj">—</span>
+        <span class="stat-celda-label">Partidos</span>
+      </div>
+      <div class="stat-celda">
+        <span class="stat-celda-num num-victorias" id="stat-g">—</span>
+        <span class="stat-celda-label">Victorias</span>
+      </div>
+      <div class="stat-celda">
+        <span class="stat-celda-num num-empates" id="stat-e">—</span>
+        <span class="stat-celda-label">Empates</span>
+      </div>
+      <div class="stat-celda">
+        <span class="stat-celda-num num-derrotas" id="stat-p">—</span>
+        <span class="stat-celda-label">Derrotas</span>
+      </div>
+      <div class="stat-celda">
+        <span class="stat-celda-num num-goles" id="stat-gf">—</span>
+        <span class="stat-celda-label">Goles a favor</span>
+      </div>
+    </div>
+
+    <!-- Lista de partidos agrupada por mes -->
+    <div id="lista-partidos">
+      <div class="cargando">Cargando fixture...</div>
+    </div>
+
+    <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="pagina">
+    <div class="pie">
+      Club Atlético Independiente &bull; Avellaneda, Buenos Aires &bull; Est. 1905
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ════════════════════════════════════════════════
+  //  CALENDARIO — lee JSONs generados por el scraper
+  //  Los datos ya vienen transformados y normalizados
+  // ════════════════════════════════════════════════
+
+  let PARTIDOS = [];
+
+  const MESES_LARGO = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                       'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MESES_CORTO = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  function renderFecha() {
+    const d = new Date();
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                   'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('meta-fecha').textContent =
+      `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  // ── Logo helper ──
+  function logoEquipo(id, nombre, size = 44) {
+    if (!id) return '';
+    return `<img
+      src="/img/equipos/${id}.png"
+      alt="${nombre || ''}"
+      width="${size}" height="${size}"
+      style="object-fit:contain;vertical-align:middle;flex-shrink:0"
+      onerror="this.style.display='none'"
+    >`;
+  }
+
+  function formatFecha(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    return `${DIAS[dt.getDay()]} ${d} ${MESES_CORTO[m - 1]}`;
+  }
+
+  function clavesMes(iso) {
+    const [y, m] = iso.split('-');
+    return { clave: `${y}-${m}`, label: `${MESES_LARGO[parseInt(m) - 1]} ${y}` };
+  }
+
+  // ── Poblar selector de temporadas desde /api/seasons ──
+  async function poblarSelectorTemporadas() {
+    const res  = await fetch('/api/seasons');
+    const json = await res.json();
+    const seasons = json.data || [];
+    const sel = document.getElementById('filtro-anio');
+    sel.querySelectorAll('option:not([value="todos"])').forEach(o => o.remove());
+    seasons.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s; opt.textContent = s;
+      sel.appendChild(opt);
+    });
+    if (seasons.length) sel.value = seasons[0];
+    return seasons[0];
+  }
+
+  // ── Poblar filtro de competiciones según los partidos cargados ──
+  function poblarFiltroComps() {
+    const comps = [...new Map(
+      PARTIDOS.map(p => [p.competicion_id, p.competicion])
+    ).entries()].filter(([id]) => id);
+    const sel = document.getElementById('filtro-comp');
+    sel.querySelectorAll('option:not([value="todos"])').forEach(o => o.remove());
+    comps.forEach(([id, nombre]) => {
+      const opt = document.createElement('option');
+      opt.value = id; opt.textContent = nombre;
+      sel.appendChild(opt);
+    });
+  }
+
+  // ── Filtros ──
+  function filtrarPartidos() {
+    const comp = document.getElementById('filtro-comp').value;
+    const cond = document.getElementById('filtro-cond').value;
+    const res  = document.getElementById('filtro-res').value;
+
+    return PARTIDOS.filter(p => {
+      if (comp !== 'todos' && String(p.competicion_id) !== String(comp)) return false;
+      if (cond !== 'todos' && p.condicion !== cond) return false;
+      if (res === 'pendiente' && p.resultado !== null) return false;
+      if (res !== 'todos' && res !== 'pendiente' && p.resultado !== res) return false;
+      return true;
+    }).sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+  }
+
+  // ── Resumen estadístico ──
+  function actualizarResumen(partidos) {
+    const jugados = partidos.filter(p => p.terminado);
+    const g  = jugados.filter(p => p.resultado === 'G').length;
+    const e  = jugados.filter(p => p.resultado === 'E').length;
+    const pe = jugados.filter(p => p.resultado === 'P').length;
+    const gf = jugados.reduce((acc, p) => acc + (p.goles_favor ?? 0), 0);
+    document.getElementById('stat-pj').textContent = partidos.length;
+    document.getElementById('stat-g').textContent  = g;
+    document.getElementById('stat-e').textContent  = e;
+    document.getElementById('stat-p').textContent  = pe;
+    document.getElementById('stat-gf').textContent = gf;
+  }
+
+  // ── Render tabla de partidos ──
+  function renderPartidos(partidos) {
+    const contenedor = document.getElementById('lista-partidos');
+    if (!partidos.length) {
+      contenedor.innerHTML = '<div class="sin-datos">No se encontraron partidos con los filtros seleccionados.</div>';
+      return;
+    }
+
+    const porMes = {};
+    partidos.forEach(p => {
+      if (!p.fecha) return;
+      const { clave, label } = clavesMes(p.fecha);
+      if (!porMes[clave]) porMes[clave] = { label, partidos: [] };
+      porMes[clave].partidos.push(p);
+    });
+
+    let html = '';
+    Object.keys(porMes).sort().forEach(clave => {
+      const { label, partidos: ps } = porMes[clave];
+      const jugados    = ps.filter(p => p.terminado).length;
+      const pendientes = ps.length - jugados;
+
+      html += `
+        <div class="mes-bloque">
+          <div class="mes-titulo">
+            ${label}
+            <small>${jugados} jugado${jugados !== 1 ? 's' : ''}${pendientes > 0 ? ` · ${pendientes} pendiente${pendientes !== 1 ? 's' : ''}` : ''}</small>
+          </div>
+          <table class="tabla-partidos">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Rival</th>
+                <th class="centrado">Cond.</th>
+                <th class="centrado">Resultado</th>
+                <th>Estadio</th>
+              </tr>
+            </thead>
+            <tbody>`;
+
+      ps.forEach(p => {
+        let marcadorHTML = '';
+        if (p.en_curso) {
+          marcadorHTML = `
+            <div class="marcador" style="color:var(--rojo)">${p.goles_favor ?? 0} &ndash; ${p.goles_contra ?? 0}</div>
+            <div><span class="res-badge" style="background:#fff0f0;color:var(--rojo);border:1px solid var(--rojo)">EN VIVO</span></div>`;
+        } else if (p.terminado) {
+          const label = p.resultado === 'G' ? 'VICTORIA' : p.resultado === 'E' ? 'EMPATE' : 'DERROTA';
+          marcadorHTML = `
+            <div class="marcador">${p.goles_favor} &ndash; ${p.goles_contra}</div>
+            <div><span class="res-badge res-${p.resultado}">${label}</span></div>`;
+        } else {
+          marcadorHTML = `<div class="pendiente">${p.hora ? p.hora + ' hs' : 'Pendiente'}</div>`;
+        }
+
+        html += `
+          <tr>
+            <td class="celda-fecha">${formatFecha(p.fecha)}</td>
+            <td class="celda-rival">
+              <span style="display:flex;align-items:center;gap:7px">
+                ${logoEquipo(p.rival_id, p.rival)}
+                <span>
+                  ${p.rival || '—'}
+                  <span class="competicion-tag">${p.competicion || '—'}</span>
+                </span>
+              </span>
+            </td>
+            <td style="text-align:center">
+              <span class="cond-badge ${p.condicion}">${p.condicion === 'local' ? 'Local' : 'Visita'}</span>
+            </td>
+            <td class="celda-resultado">${marcadorHTML}</td>
+            <td class="celda-estadio">${p.estadio || '—'}</td>
+          </tr>`;
+      });
+
+      html += '</tbody></table></div>';
+    });
+
+    contenedor.innerHTML = html;
+  }
+
+  function aplicarFiltros() {
+    const filtrados = filtrarPartidos();
+    actualizarResumen(filtrados);
+    renderPartidos(filtrados);
+  }
+
+  // ── Cargar temporada desde el proxy ──
+  async function cargarTemporada(season) {
+    document.getElementById('lista-partidos').innerHTML =
+      `<div class="cargando">Cargando temporada ${season}...</div>`;
+    document.getElementById('filtro-comp').value = 'todos';
+
+    try {
+      const qs   = season && season !== 'todos' ? `?season=${season}` : '';
+      const res  = await fetch(`/api/partidos${qs}`);
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error);
+
+      PARTIDOS = json.data;
+      poblarFiltroComps();
+      aplicarFiltros();
+
+      // Auto-refresh si hay partido en curso
+      if (PARTIDOS.some(p => p.en_curso)) {
+        console.log('[calendario] Partido en curso — refresh en 60s');
+        setTimeout(() => cargarTemporada(season), 60_000);
+      }
+
+    } catch (err) {
+      console.error('[calendario]', err);
+      document.getElementById('lista-partidos').innerHTML = `
+        <div class="sin-datos">
+          <strong>Sin datos para esta temporada.</strong><br>
+          Corré <code>npm run scrape</code> para descargar los datos.<br>
+          <small style="color:var(--tinta-suave)">${err.message}</small>
+        </div>`;
+    }
+  }
+
+  async function init() {
+    renderFecha();
+    const temporadaDefecto = await poblarSelectorTemporadas();
+    if (temporadaDefecto) await cargarTemporada(temporadaDefecto);
+    else {
+      document.getElementById('lista-partidos').innerHTML =
+        '<div class="sin-datos">No hay datos. Corré <code>npm run scrape</code> primero.</div>';
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

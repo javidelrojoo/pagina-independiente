@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liga Actual — Club Atlético Independiente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IM+Fell+English+SC&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rojo: #c0000a;
+      --rojo-oscuro: #8a0008;
+      --rojo-suave: #fef0f0;
+      --tinta: #1a1612;
+      --tinta-media: #4a4540;
+      --tinta-suave: #7a746e;
+      --papel: #f5f0e8;
+      --papel-oscuro: #ede7d9;
+      --papel-claro: #faf7f2;
+      --borde: #c8bfb0;
+      --borde-fuerte: #8a8070;
+      --verde-victoria: #1a5e1a;
+      --verde-bg: #eef6ee;
+      --amarillo-empate: #7a6010;
+      --amarillo-bg: #fdf8ea;
+      --rojo-derrota: #8a0008;
+      --fuente-titulo: 'Playfair Display', Georgia, serif;
+      --fuente-cuerpo: 'Libre Baskerville', Georgia, serif;
+      --fuente-cabeza: 'IM Fell English SC', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--papel);
+      color: var(--tinta);
+      font-family: var(--fuente-cuerpo);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.018) 28px, rgba(0,0,0,0.018) 29px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pagina {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Masthead ── */
+    .masthead { border-top: 6px solid var(--rojo); border-bottom: 4px solid var(--rojo); padding: .5rem 0 .7rem; text-align: center; }
+    .masthead-meta { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-suave); padding: 0 .25rem; margin-bottom: .4rem; }
+    .masthead-linea { border: none; border-top: 1px solid var(--borde); margin: .35rem 0; }
+    .masthead-titulo { font-family: var(--fuente-cabeza); font-size: clamp(36px,6vw,68px); letter-spacing: .04em; color: var(--tinta); line-height: 1; margin-bottom: .1rem; }
+    .masthead-subtitulo { font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--tinta-suave); }
+    .banda-roja { background: var(--rojo); color: #fff; text-align: center; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; padding: 5px 0; }
+
+    /* ── Nav ── */
+    .nav-principal { border-bottom: 2px solid var(--tinta); background: var(--papel-claro); position: sticky; top: 0; z-index: 100; }
+    .nav-lista { display: flex; list-style: none; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; flex-wrap: wrap; }
+    .nav-lista a { display: block; padding: 10px 18px; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--tinta-media); text-decoration: none; border-right: 1px solid var(--borde); transition: background .15s, color .15s; font-family: var(--fuente-cuerpo); }
+    .nav-lista li:first-child a { border-left: 1px solid var(--borde); }
+    .nav-lista a:hover, .nav-lista a.activo { background: var(--rojo); color: #fff; }
+
+    /* ── Cabecera de sección ── */
+    .seccion-header { border-bottom: 3px double var(--borde-fuerte); padding: 1.5rem 0 1rem; margin-bottom: 1.5rem; }
+    .liga-nombre { font-family: var(--fuente-titulo); font-size: 38px; font-weight: 900; color: var(--tinta); line-height: 1; }
+    .liga-nombre span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--tinta-suave); font-family: var(--fuente-cuerpo); font-weight: 400; margin-bottom: .3rem; }
+    .liga-meta { font-size: 11px; color: var(--tinta-suave); letter-spacing: .08em; margin-top: .4rem; }
+
+    /* ── Layout 3 columnas ── */
+    .layout-liga {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 0;
+      align-items: start;
+    }
+
+    .col-principal { border-right: 1px solid var(--borde); padding-right: 1.5rem; }
+    .col-lateral   { padding-left: 1.5rem; }
+
+    /* ── Título de bloque ── */
+    .bloque-titulo {
+      font-size: 9px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      border-bottom: 2px solid var(--rojo);
+      padding-bottom: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .bloque { margin-bottom: 2rem; }
+
+    /* ── Tabs de zonas ── */
+    .tabs-zonas {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--borde);
+      background: var(--papel-claro);
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-zona {
+      background: none;
+      border: none;
+      border-right: 1px solid var(--borde);
+      padding: 7px 14px;
+      font-family: var(--fuente-cuerpo);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      cursor: pointer;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+
+    .tab-zona:last-child { border-right: none; }
+    .tab-zona:hover { background: var(--papel-oscuro); color: var(--tinta); }
+    .tab-zona.activo { background: var(--rojo); color: #fff; }
+
+    /* ── Tabla de posiciones ── */
+    .tabla-pos {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .tabla-pos thead tr {
+      background: var(--papel-oscuro);
+      border-bottom: 2px solid var(--borde-fuerte);
+    }
+
+    .tabla-pos th {
+      font-size: 8px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      font-weight: 400;
+      padding: 6px 8px;
+      text-align: right;
+      font-family: var(--fuente-cuerpo);
+    }
+
+    .tabla-pos th.izq { text-align: left; }
+
+    .tabla-pos td {
+      padding: 7px 8px;
+      border-bottom: 1px solid var(--papel-oscuro);
+      text-align: right;
+      color: var(--tinta-media);
+      vertical-align: middle;
+    }
+
+    .tabla-pos td.izq { text-align: left; }
+    .tabla-pos tbody tr:hover { background: var(--papel-claro); }
+    .tabla-pos tbody tr:last-child td { border-bottom: none; }
+
+    .tabla-pos tr.es-cai td {
+      color: var(--rojo);
+      font-weight: 700;
+      background: #fff8f8;
+    }
+
+    .celda-equipo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .celda-equipo img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .pos-num {
+      font-family: var(--fuente-titulo);
+      font-weight: 900;
+      color: var(--tinta-suave);
+      min-width: 18px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    .pos-num.cai { color: var(--rojo); }
+
+    /* Barra de forma */
+    .forma {
+      display: flex;
+      gap: 2px;
+    }
+
+    .forma-resultado {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: #fff;
+    }
+
+    .forma-G { background: var(--verde-victoria); }
+    .forma-E { background: #b0960a; }
+    .forma-P { background: var(--rojo-derrota); }
+    .forma-? { background: var(--borde); color: var(--tinta-suave); }
+
+    /* Línea de clasificación */
+    .linea-clasif {
+      height: 3px;
+      background: var(--rojo);
+      margin: 2px 0;
+    }
+    
+    /* ── Colores de clasificación ── */
+    .tabla-pos td:first-child { border-left: 3px solid transparent; }
+    .qual-campeon { border-left-color: #D4AF37 !important; }
+    .qual-libertadores { border-left-color: #1a5e1a !important; }
+    .qual-sudamericana { border-left-color: #005c9e !important; }
+    .qual-playoff { border-left-color: #2AD572 !important; }
+    .qual-descenso { border-left-color: var(--rojo) !important; }
+
+    /* Leyenda debajo de la tabla */
+    .leyenda-clasificacion {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 10px;
+      color: var(--tinta-suave);
+      font-family: var(--fuente-cuerpo);
+    }
+    .leyenda-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .leyenda-color {
+      width: 8px;
+      height: 8px;
+    }
+
+    /* ── Cuadro de Playoffs ── */
+    .playoffs-scroll {
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+    .playoffs-container {
+      display: flex;
+      gap: 2rem;
+      min-width: 800px;
+      padding: 10px 0;
+    }
+    .ronda {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      gap: 1rem;
+      flex: 1;
+    }
+    .ronda-titulo {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--tinta-suave);
+      margin-bottom: 5px;
+    }
+    .matchup {
+      background: var(--papel-claro);
+      border: 1px solid var(--borde);
+      font-size: 11px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .matchup-eq {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--papel-oscuro);
+    }
+    .matchup-eq:last-child { border-bottom: none; }
+    .matchup-eq.es-cai {
+      background: var(--rojo-suave);
+      font-weight: 700;
+      color: var(--rojo);
+    }
+    .matchup-nombre {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--tinta);
+    }
+    .matchup-pos {
+      font-size: 8px;
+      color: var(--tinta-suave);
+      width: 16px;
+      text-align: center;
+      background: var(--papel-oscuro);
+      padding: 1px 0;
+      font-weight: 400;
+    }
+    .matchup-tbd {
+      color: var(--tinta-suave);
+      font-style: italic;
+      padding: 6px 10px;
+    }
+
+    /* ── Fixture de la fecha ── */
+    .partido-fecha {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+    }
+
+    .partido-fecha:last-child { border-bottom: none; }
+
+    .partido-equipo {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--tinta);
+    }
+
+    .partido-equipo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .partido-equipo.visita {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    .partido-marcador {
+      min-width: 80px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .marcador-num {
+      font-family: var(--fuente-titulo);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--tinta);
+      letter-spacing: .02em;
+    }
+
+    .marcador-hora {
+      font-size: 10px;
+      letter-spacing: .08em;
+      color: var(--tinta-suave);
+      font-style: italic;
+    }
+
+    .marcador-vivo {
+      font-size: 9px;
+      letter-spacing: .1em;
+      color: var(--rojo);
+      font-weight: 700;
+      animation: pulso 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulso { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+    .partido-cai { background: #fff8f8; border-left: 3px solid var(--rojo); padding-left: 8px; }
+
+    /* ── Top jugadores (lateral) ── */
+    .top-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--papel-oscuro);
+    }
+
+    .top-item:last-child { border-bottom: none; }
+
+    .top-rank {
+      font-family: var(--fuente-titulo);
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--papel-oscuro);
+      min-width: 22px;
+      text-align: right;
+      line-height: 1;
+    }
+
+    .top-rank.primero { color: var(--rojo); }
+
+    .top-info { flex: 1; }
+
+    .top-nombre {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--tinta);
+      line-height: 1.2;
+    }
+
+    .top-equipo {
+      font-size: 10px;
+      color: var(--tinta-suave);
+      font-style: italic;
+    }
+
+    .top-valor {
+      font-family: var(--fuente-titulo);
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--rojo);
+      line-height: 1;
+    }
+
+    /* ── Tabs categoría tops ── */
+    .tabs-tops {
+      display: flex;
+      border-bottom: 2px solid var(--borde);
+      margin-bottom: .75rem;
+    }
+
+    .tab-top {
+      background: none;
+      border: none;
+      padding: 6px 12px;
+      font-family: var(--fuente-cuerpo);
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--tinta-suave);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color .15s;
+    }
+
+    .tab-top.activo { color: var(--rojo); border-bottom-color: var(--rojo); }
+    .tab-top:hover { color: var(--tinta); }
+
+    /* ── Ornamento / pie ── */
+    .ornamento { text-align: center; color: var(--borde-fuerte); font-size: 14px; letter-spacing: 10px; margin: 1rem 0 1.5rem; }
+    .pie { border-top: 4px solid var(--rojo); padding: .75rem 0; text-align: center; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-suave); margin-top: 2rem; }
+    .cargando { text-align: center; padding: 3rem; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-suave); font-style: italic; }
+    .sin-datos { text-align: center; padding: 2rem; font-size: 12px; font-style: italic; color: var(--tinta-suave); border: 1px dashed var(--borde); }
+
+    @media (max-width: 800px) {
+      .layout-liga { grid-template-columns: 1fr; }
+      .col-principal { border-right: none; padding-right: 0; border-bottom: 2px solid var(--borde); padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+      .col-lateral { padding-left: 0; }
+      .forma { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="pagina">
+    <div class="masthead">
+      <div class="masthead-meta">
+        <span id="meta-fecha">—</span>
+        <span>El Rojo de Avellaneda</span>
+        <span>Fundado en 1905 &bull; Avellaneda</span>
+      </div>
+      <hr class="masthead-linea" />
+      <h1 class="masthead-titulo">Independiente</h1>
+      <p class="masthead-subtitulo">Club Atlético Independiente &mdash; El Rey de Copas</p>
+      <hr class="masthead-linea" />
+    </div>
+  </div>
+  <div class="banda-roja">&#9733; Liga Actual &#9733;</div>
+  <nav class="nav-principal">
+    <ul class="nav-lista">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="calendario.html">Calendario</a></li>
+      <li><a href="liga.html" class="activo">Liga Actual</a></li>
+      <li><a href="historial.html">Historial</a></li>
+      <li><a href="plantel.html">Plantel</a></li>
+      <li><a href="campeonatos.html">Campeonatos</a></li>
+      <li><a href="estadisticas.html">Estadísticas</a></li>
+      <li><a href="historicos.html">Ídolos</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="pagina">
+
+    <div class="seccion-header">
+      <div>
+        <div class="liga-nombre">
+          <span>&#9632; Competencia en curso</span>
+          <span id="titulo-liga">Cargando...</span>
+        </div>
+        <div class="liga-meta" id="liga-meta"></div>
+      </div>
+    </div>
+
+    <!-- Cuadro de Playoffs Proyectado -->
+    <div class="bloque" id="bloque-playoffs" style="display: none;">
+      <div class="bloque-titulo">&#9632; Playoffs</div>
+      <div class="playoffs-scroll">
+        <div class="playoffs-container" id="playoffs-container">
+          <!-- Se inyecta por JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="layout-liga">
+         
+      <!-- ── Columna principal: tabla + fecha ── -->
+      <div class="col-principal">
+
+        <!-- Tabla de posiciones -->
+        <div class="bloque">
+          <div class="bloque-titulo">&#9632; Tabla de posiciones</div>
+          <div class="tabs-zonas" id="tabs-zonas"></div>
+          <div id="contenedor-tabla">
+            <div class="cargando">Cargando tabla...</div>
+          </div>
+        </div>
+
+        <!-- Fixture de la fecha -->
+        <div class="bloque">
+          <div class="bloque-titulo" id="titulo-fecha">&#9632; Fecha actual</div>
+          <div id="fixture-fecha">
+            <div class="cargando">Cargando fixture...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Columna lateral: tops ── -->
+      <div class="col-lateral">
+
+        <div class="bloque">
+          <div class="bloque-titulo">&#9632; Destacados de la liga</div>
+          <div class="tabs-tops">
+            <button class="tab-top activo" onclick="setTabTop('goleadores', this)">Goleadores</button>
+            <button class="tab-top" onclick="setTabTop('asistidores', this)">Asistentes</button>
+            <button class="tab-top" onclick="setTabTop('mejor_rating', this)">Rating</button>
+          </div>
+          <div id="lista-tops">
+            <div class="cargando">Cargando...</div>
+          </div>
+        </div>
+
+        <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+
+        <!-- Resumen de CAI en la liga -->
+        <div class="bloque">
+          <div class="bloque-titulo">&#9632; Independiente en la liga</div>
+          <div id="resumen-cai"></div>
+        </div>
+
+      </div>
+
+    </div><!-- /layout-liga -->
+
+    <div class="ornamento">&#10042; &nbsp; &#10042; &nbsp; &#10042;</div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="pagina">
+    <div class="pie">Club Atlético Independiente &bull; Avellaneda, Buenos Aires &bull; Est. 1905</div>
+  </div>
+</footer>
+
+<script>
+  // ════════════════════════════════════════════════
+  //  LIGA ACTUAL — lee /api/liga
+  // ════════════════════════════════════════════════
+
+  let LIGA = null;
+  let ZONA_ACTIVA = 0;
+  let TAB_TOP_ACTIVO = 'goleadores';
+
+  // ── Helpers ──
+  function logoEquipo(id, nombre, size = 24) {
+    if (!id) return '';
+    return `<img src="/img/equipos/${id}.png" alt="${nombre || ''}" width="${size}" height="${size}"
+      style="object-fit:contain;flex-shrink:0" onerror="this.style.display='none'">`;
+  }
+
+  function renderFecha() {
+    const d = new Date();
+    const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio',
+                   'julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('meta-fecha').textContent =
+      `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+  }
+
+  function formatHora(hora) {
+    return hora ? hora + ' hs' : '—';
+  }
+
+  function formatFechaCorta(iso) {
+    if (!iso) return '';
+    const [, m, d] = iso.split('-').map(Number);
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return `${d} ${meses[m-1]}`;
+  }
+
+// ── Generador de Anual y Promedios ──
+  function generarTablasArgentinas() {
+    if (!LIGA.zonas || !LIGA.zonas.length) return;
+
+    // 1. Calcular Tabla Anual
+    const mapAnual = {};
+    LIGA.zonas.forEach(zona => {
+      // Evitamos sumar tablas que ya sean acumuladas o promedios
+      if (zona.es_anual || zona.es_promedio) return; 
+      
+      zona.tabla.forEach(eq => {
+        if (!mapAnual[eq.equipo_id]) {
+          mapAnual[eq.equipo_id] = { ...eq }; // Clonamos el objeto
+        } else {
+          const acumulado = mapAnual[eq.equipo_id];
+          acumulado.pj += eq.pj;
+          acumulado.g += eq.g;
+          acumulado.e += eq.e;
+          acumulado.p += eq.p;
+          acumulado.gf += eq.gf;
+          acumulado.gc += eq.gc;
+          acumulado.dg += eq.dg;
+          acumulado.pts += eq.pts;
+        }
+      });
+    });
+
+    const tablaAnual = Object.values(mapAnual);
+    // Ordenar Anual: PTS -> DG -> GF
+    tablaAnual.sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
+    tablaAnual.forEach((eq, idx) => eq.pos = idx + 1);
+
+    LIGA.zonas.push({ nombre: "Tabla Anual", tabla: tablaAnual, es_anual: true, tiene_cai: true });
+
+    // 2. Calcular Tabla de Promedios
+    // MOCK: Arrastre de las 2 temporadas anteriores (Ejemplo ficticio).
+    // Acá pondrías los PTS y PJ acumulados reales de 2024 y 2025. 
+    // Equipos recién ascendidos arrancan vacío o en 0.
+    const arrastreAnterior = {
+      10078: { pts: 110, pj: 82 }, // Independiente
+      10077: { pts: 125, pj: 82 }, // Boca
+      10076: { pts: 130, pj: 82 }, // River
+      10080: { pts: 115, pj: 82 }, // Racing
+      // ... Agregar el resto de los equipos
+    };
+
+    const tablaPromedios = tablaAnual.map(eq => {
+      const arrastre = arrastreAnterior[eq.equipo_id] || { pts: 0, pj: 0 };
+      const ptsTotales = arrastre.pts + eq.pts;
+      const pjTotales = arrastre.pj + eq.pj;
+      const promedio = pjTotales > 0 ? (ptsTotales / pjTotales).toFixed(3) : "0.000";
+
+      return {
+        ...eq,
+        ptsTotales,
+        pjTotales,
+        promedio: parseFloat(promedio)
+      };
+    });
+
+    // Ordenar Promedios: Promedio -> PTS Totales
+    tablaPromedios.sort((a, b) => b.promedio - a.promedio || b.ptsTotales - a.ptsTotales);
+    tablaPromedios.forEach((eq, idx) => eq.pos = idx + 1);
+
+    LIGA.zonas.push({ nombre: "Promedios", tabla: tablaPromedios, es_promedio: true, tiene_cai: true });
+  }
+
+  // ── Tabla de posiciones ──
+  function renderTabla(zona) {
+    const tabla = zona.tabla;
+    if (!tabla || !tabla.length) {
+      document.getElementById('contenedor-tabla').innerHTML = '<div class="sin-datos">Sin datos de tabla.</div>';
+      return;
+    }
+
+    const esPromedio = zona.es_promedio;
+    const totalEquipos = tabla.length; // Usamos la longitud total para saber quién es el último
+
+    const filas = tabla.map(s => {
+      const esCai = s.es_cai;
+      
+      // ── Lógica de Colores (Argentina) ──
+      let qualClass = '';
+      if (zona.es_anual) {
+        if (s.pos === 1) qualClass = 'qual-campeon';
+        else if (s.pos >= 2 && s.pos <= 3) qualClass = 'qual-libertadores';
+        else if (s.pos >= 4 && s.pos <= 9) qualClass = 'qual-sudamericana';
+        else if (s.pos === totalEquipos) qualClass = 'qual-descenso';
+      } else if (zona.es_promedio) {
+        if (s.pos === totalEquipos) qualClass = 'qual-descenso';
+      } else {
+        // Fase de grupos (Zonas)
+        if (s.pos >= 1 && s.pos <= 8) qualClass = 'qual-playoff';
+      }
+      
+      let colsExtra = '';
+      if (esPromedio) {
+        colsExtra = `
+          <td>${s.pjTotales}</td>
+          <td><strong>${s.ptsTotales}</strong></td>
+          <td><strong style="color:var(--rojo)">${s.promedio.toFixed(3)}</strong></td>`;
+      } else {
+        const forma = (s.forma || []).slice(-5).map(r => {
+          const c = r === 'W' ? 'G' : r === 'D' ? 'E' : r === 'L' ? 'P' : '?';
+          return `<span class="forma-resultado forma-${c}">${c}</span>`;
+        }).join('');
+        
+        colsExtra = `
+          <td>${s.pj}</td>
+          <td>${s.g}</td>
+          <td>${s.e}</td>
+          <td>${s.p}</td>
+          <td>${s.gf}:${s.gc}</td>
+          <td>${s.dg > 0 ? '+' : ''}${s.dg}</td>
+          <td><strong>${s.pts}</strong></td>
+          <td class="izq"><div class="forma">${forma}</div></td>`;
+      }
+
+      // Aplicamos la clase "qualClass" al primer td
+      return `
+        <tr class="${esCai ? 'es-cai' : ''}">
+          <td class="izq ${qualClass}"><span class="pos-num ${esCai ? 'cai' : ''}">${s.pos}</span></td>
+          <td class="izq">
+            <div class="celda-equipo">
+              ${logoEquipo(s.equipo_id, s.equipo)}
+              <span>${esCai ? '<strong>Independiente</strong>' : s.equipo}</span>
+            </div>
+          </td>
+          ${colsExtra}
+        </tr>`;
+    }).join('');
+
+    const theadPromedios = `
+      <tr>
+        <th class="izq">#</th>
+        <th class="izq">Equipo</th>
+        <th title="Partidos Totales">PJ Tot.</th>
+        <th title="Puntos Totales">PTS Tot.</th>
+        <th title="Promedio">Promedio</th>
+      </tr>`;
+
+    const theadNormal = `
+      <tr>
+        <th class="izq">#</th>
+        <th class="izq">Equipo</th>
+        <th title="Partidos jugados">PJ</th>
+        <th title="Ganados">G</th>
+        <th title="Empatados">E</th>
+        <th title="Perdidos">P</th>
+        <th title="Goles">GF:GC</th>
+        <th title="Diferencia de gol">DG</th>
+        <th title="Puntos">PTS</th>
+        <th class="izq" title="Últimos 5">Forma</th>
+      </tr>`;
+
+    // ── Lógica de Leyendas ──
+    let leyendaHTML = '';
+    if (zona.es_anual) {
+      leyendaHTML = `
+        <div class="leyenda-clasificacion">
+          <div class="leyenda-item"><div class="leyenda-color" style="background:#D4AF37"></div> Campeón / Lib. 2027 / Supercopa 2026</div>
+          <div class="leyenda-item"><div class="leyenda-color" style="background:#1a5e1a"></div> Libertadores 2027</div>
+          <div class="leyenda-item"><div class="leyenda-color" style="background:#005c9e"></div> Sudamericana 2027</div>
+          <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div>
+        </div>`;
+    } else if (zona.es_promedio) {
+      leyendaHTML = `
+        <div class="leyenda-clasificacion">
+          <div class="leyenda-item"><div class="leyenda-color" style="background:var(--rojo)"></div> Descenso</div>
+        </div>`;
+    } else {
+      leyendaHTML = `
+        <div class="leyenda-clasificacion">
+          <div class="leyenda-item"><div class="leyenda-color" style="background:#2AD572"></div> Playoffs</div>
+        </div>`;
+    }
+
+    document.getElementById('contenedor-tabla').innerHTML = `
+      <table class="tabla-pos">
+        <thead>${esPromedio ? theadPromedios : theadNormal}</thead>
+        <tbody>${filas}</tbody>
+      </table>
+      ${leyendaHTML}`;
+  }
+  
+  // ── Tabs de zonas ──
+  function renderTabs() {
+    const zonas = LIGA.zonas;
+    if (!zonas || !zonas.length) {
+      document.getElementById('tabs-zonas').style.display = 'none';
+      return;
+    }
+    if (zonas.length === 1) {
+      document.getElementById('tabs-zonas').style.display = 'none';
+      renderTabla(zonas[0]);
+      return;
+    }
+
+    document.getElementById('tabs-zonas').innerHTML = zonas.map((z, i) => `
+      <button class="tab-zona ${i === ZONA_ACTIVA ? 'activo' : ''}"
+        onclick="setZona(${i}, this)">${z.nombre}</button>
+    `).join('');
+
+    renderTabla(zonas[ZONA_ACTIVA]);
+  }
+
+  function setZona(idx, btn) {
+    ZONA_ACTIVA = idx;
+    document.querySelectorAll('.tab-zona').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    renderTabla(LIGA.zonas[idx]);
+  }
+
+  // ── Fixture de la fecha ──
+  function renderFixtureFecha() {
+    const partidos = LIGA.partidos_fecha;
+    const label    = LIGA.fecha_label;
+
+    if (label) {
+      document.getElementById('titulo-fecha').textContent = `◼ ${label}`;
+    }
+
+    if (!partidos || !partidos.length) {
+      document.getElementById('fixture-fecha').innerHTML = '<div class="sin-datos">Sin partidos para esta fecha.</div>';
+      return;
+    }
+
+    document.getElementById('fixture-fecha').innerHTML = partidos.map(p => {
+      let marcadorHTML;
+      if (p.en_curso) {
+        marcadorHTML = `
+          <div class="marcador-num" style="color:var(--rojo)">${p.goles_local} &ndash; ${p.goles_visita}</div>
+          <div class="marcador-vivo">EN VIVO</div>`;
+      } else if (p.terminado) {
+        marcadorHTML = `<div class="marcador-num">${p.goles_local} &ndash; ${p.goles_visita}</div>`;
+      } else {
+        marcadorHTML = `
+          <div class="marcador-hora">${formatFechaCorta(p.fecha)}</div>
+          <div class="marcador-hora">${formatHora(p.hora)}</div>`;
+      }
+
+      const esCai = p.involucra_cai;
+
+      return `
+        <div class="partido-fecha ${esCai ? 'partido-cai' : ''}">
+          <div class="partido-equipo local">
+            ${logoEquipo(p.local_id, p.local, 28)}
+            <span>${p.local}</span>
+          </div>
+          <div class="partido-marcador">${marcadorHTML}</div>
+          <div class="partido-equipo visita">
+            ${logoEquipo(p.visita_id, p.visita, 28)}
+            <span>${p.visita}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Top jugadores ──
+  function renderTops(categoria) {
+    const lista = (LIGA.top_jugadores || {})[categoria] || [];
+
+    if (!lista.length) {
+      document.getElementById('lista-tops').innerHTML = '<div class="sin-datos">Sin datos.</div>';
+      return;
+    }
+
+    const labels = { goleadores: 'goles', asistidores: 'asist.', mejor_rating: 'rating' };
+
+    document.getElementById('lista-tops').innerHTML = lista.slice(0, 8).map((j, i) => `
+      <div class="top-item">
+        <div class="top-rank ${i === 0 ? 'primero' : ''}">${i + 1}</div>
+        <div class="top-info">
+          <div class="top-nombre">${j.nombre || '—'}</div>
+          <div class="top-equipo" style="display:flex;align-items:center;gap:5px">
+            ${logoEquipo(j.equipo_id, j.equipo, 14)}
+            ${j.equipo || '—'}
+          </div>
+        </div>
+        <div class="top-valor">${j.valor ?? '—'}<span style="font-size:9px;color:var(--tinta-suave);font-family:var(--fuente-cuerpo);font-weight:400"> ${labels[categoria]}</span></div>
+      </div>`).join('');
+  }
+
+  function setTabTop(categoria, btn) {
+    TAB_TOP_ACTIVO = categoria;
+    document.querySelectorAll('.tab-top').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    renderTops(categoria);
+  }
+
+  // ── Resumen de CAI ──
+  function renderResumenCai() {
+    // Buscamos a CAI en la primera zona que lo tenga
+    let filaCai = null;
+    for (const zona of (LIGA.zonas || [])) {
+      filaCai = zona.tabla.find(s => s.es_cai);
+      if (filaCai) break;
+    }
+
+    if (!filaCai) {
+      document.getElementById('resumen-cai').innerHTML = '<div class="sin-datos">Sin datos.</div>';
+      return;
+    }
+
+    const pct = filaCai.pj > 0 ? Math.round((filaCai.g / filaCai.pj) * 100) : 0;
+
+    document.getElementById('resumen-cai').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--borde);border-top:3px solid var(--rojo)">
+        ${[
+          ['Posición',  filaCai.pos + '°'],
+          ['Puntos',    filaCai.pts],
+          ['Partidos',  filaCai.pj],
+          ['Victorias', filaCai.g],
+          ['Empates',   filaCai.e],
+          ['Derrotas',  filaCai.p],
+          ['Goles F.',  filaCai.gf],
+          ['Goles C.',  filaCai.gc],
+          ['Dif. gol',  (filaCai.dg > 0 ? '+' : '') + filaCai.dg],
+          ['% victorias', pct + '%'],
+        ].map(([label, val]) => `
+          <div style="padding:7px 10px;border-bottom:1px solid var(--papel-oscuro);border-right:1px solid var(--borde)">
+            <div style="font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta-suave)">${label}</div>
+            <div style="font-family:var(--fuente-titulo);font-size:20px;font-weight:900;color:var(--rojo);line-height:1.1">${val}</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+// ── Cuadro de Playoffs ──
+  function renderPlayoffs() {
+    // Filtramos para agarrar solo las Zonas A y B (ignoramos Anual y Promedios)
+    const zonas = (LIGA.zonas || []).filter(z => !z.es_anual && !z.es_promedio);
+    
+    // Si no es un torneo de 2 zonas, no mostramos el cuadro
+    if (zonas.length !== 2) return;
+
+    const zA = zonas[0].tabla;
+    const zB = zonas[1].tabla;
+
+    // Si todavía no hay suficientes equipos en las tablas, abortamos
+    if (zA.length < 8 || zB.length < 8) return;
+
+    // Mostramos el contenedor
+    document.getElementById('bloque-playoffs').style.display = 'block';
+
+    // ── Cruces exactos de Octavos de Final (16 equipos) ──
+    const cruces = [
+      [zA[0], zB[7]], // 1°A vs 8°B
+      [zB[3], zA[4]], // 4°B vs 5°A
+      [zA[2], zB[5]], // 3°A vs 6°B
+      [zB[1], zA[6]], // 2°B vs 7°A
+      [zB[0], zA[7]], // 1°B vs 8°A
+      [zA[3], zB[4]], // 4°A vs 5°B
+      [zB[2], zA[5]], // 3°B vs 6°A
+      [zA[1], zB[6]]  // 2°A vs 7°B
+    ];
+
+    function renderEq(eq) {
+      if (!eq) return `<div class="matchup-tbd">Por definir</div>`;
+      const esCai = eq.es_cai ? 'es-cai' : '';
+      return `
+        <div class="matchup-eq ${esCai}">
+          <span class="matchup-nombre">
+            <span class="matchup-pos">${eq.pos}°</span>
+            ${logoEquipo(eq.equipo_id, eq.equipo, 14)}
+            <span>${eq.equipo}</span>
+          </span>
+        </div>`;
+    }
+
+    const htmlOctavos = cruces.map(c => `
+      <div class="matchup">
+        ${renderEq(c[0])}
+        ${renderEq(c[1])}
+      </div>
+    `).join('');
+
+    // Para el diseño, ponemos cajas vacías "esperando" a los ganadores
+    const htmlCuartos = Array(4).fill('<div class="matchup"><div class="matchup-tbd">Ganador Octavos</div><div class="matchup-tbd">Ganador Octavos</div></div>').join('');
+    const htmlSemis = Array(2).fill('<div class="matchup"><div class="matchup-tbd">Ganador Cuartos</div><div class="matchup-tbd">Ganador Cuartos</div></div>').join('');
+    const htmlFinal = '<div class="matchup" style="border: 1px solid var(--rojo)"><div class="matchup-tbd">Finalista 1</div><div class="matchup-tbd">Finalista 2</div></div>';
+
+    document.getElementById('playoffs-container').innerHTML = `
+      <div class="ronda">
+        <div class="ronda-titulo">Octavos</div>
+        ${htmlOctavos}
+      </div>
+      <div class="ronda">
+        <div class="ronda-titulo">Cuartos</div>
+        ${htmlCuartos}
+      </div>
+      <div class="ronda" style="justify-content: space-around;">
+        <div class="ronda-titulo">Semifinal</div>
+        ${htmlSemis}
+      </div>
+      <div class="ronda" style="justify-content: center;">
+        <div class="ronda-titulo" style="color: var(--rojo)">Final</div>
+        ${htmlFinal}
+      </div>
+    `;
+  }
+
+  // ── Init ──
+  async function init() {
+    renderFecha();
+    try {
+      const res  = await fetch('/api/liga');
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error);
+      LIGA = json.data;
+
+      // Cabecera
+      document.getElementById('titulo-liga').textContent = LIGA.nombre || 'Liga Profesional';
+      document.getElementById('liga-meta').textContent =
+        [LIGA.temporada ? 'Temporada ' + LIGA.temporada : null]
+        .filter(Boolean).join(' · ');
+
+      // ¡Magia! Generamos las tablas extra antes de renderizar los tabs
+      generarTablasArgentinas();
+      
+      // Armamos el cuadro de playoffs con la proyección actual
+      renderPlayoffs();
+
+      if (LIGA.zonas && LIGA.zonas.length > 1) {
+        const idxCai = LIGA.zonas.findIndex(z => z.tiene_cai);
+        if (idxCai >= 0) ZONA_ACTIVA = idxCai;
+      }
+
+      renderTabs();
+      renderFixtureFecha();
+      renderTops('goleadores');
+      renderResumenCai();
+
+      if ((LIGA.partidos_fecha || []).some(p => p.en_curso)) {
+        setTimeout(init, 60_000);
+      }
+
+    } catch (err) {
+      console.error('[liga]', err);
+      document.getElementById('contenedor-tabla').innerHTML =
+        `<div class="sin-datos"><strong>Sin datos de liga.</strong><br>Corré <code>npm run scrape</code>.<br><small>${err.message}</small></div>`;
+      document.getElementById('fixture-fecha').innerHTML = '';
+      document.getElementById('lista-tops').innerHTML = '';
+    }
+  }
+
+  
+  init();
+</script>
+</body>
+</html>

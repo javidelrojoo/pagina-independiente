@@ -1,0 +1,18 @@
+{
+  "name": "cai-sitio",
+  "version": "2.0.0",
+  "description": "Sitio web Club Atlético Independiente — datos via FotMob scraper",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "scrape": "py scraper/fotmob.py",
+    "scrape:force": "py scraper/fotmob.py --force",
+    "scrape:details": "py scraper/fotmob.py --details",
+    "check": "py scraper/fotmob.py --check"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.4.5"
+  }
+}
+
